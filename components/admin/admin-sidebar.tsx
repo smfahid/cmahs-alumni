@@ -59,16 +59,16 @@ export function AdminSidebar() {
       href: "/admin/donations",
       icon: <Gift className="h-5 w-5" />,
     },
-    {
-      name: "Settings",
-      href: "/admin/settings",
-      icon: <Settings className="h-5 w-5" />,
-    },
-    {
-      name: "Storage",
-      href: "/admin/settings/storage",
-      icon: <Database className="h-5 w-5" />,
-    },
+    // {
+    //   name: "Settings",
+    //   href: "/admin/settings",
+    //   icon: <Settings className="h-5 w-5" />,
+    // },
+    // {
+    //   name: "Storage",
+    //   href: "/admin/settings/storage",
+    //   icon: <Database className="h-5 w-5" />,
+    // },
   ];
 
   return (

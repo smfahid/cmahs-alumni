@@ -1,5 +1,4 @@
 import type React from "react";
-import { redirect } from "next/navigation";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { getSupabase } from "@/lib/supabase";
 import { cookies } from "next/headers";

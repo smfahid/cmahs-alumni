@@ -27,7 +27,7 @@ export default async function GalleryPage({
 }: Readonly<{
   searchParams: { page?: string };
 }>) {
-  const page = searchParams.page ? Number.parseInt(searchParams.page) : 1;
+  const page = searchParams?.page ? Number.parseInt(searchParams.page) : 1;
   const { images, totalPages, currentPage } = await getGalleryImages(page);
 
   return (
