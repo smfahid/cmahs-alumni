@@ -40,13 +40,15 @@ export function Navbar() {
     { name: "About Us", href: "/about" },
     { name: "Events", href: "/events" },
     { name: "Membership", href: "/membership" },
+    { name: "Member List", href: "/member-list" },
     { name: "Gallery", href: "/gallery" },
     { name: "Contact", href: "/contact" },
+    { name: "Donations", href: "/donations" },
   ];
 
   const navLinks = user
     ? baseNavLinks.filter((link) => link.name !== "Membership")
-    : baseNavLinks;
+    : baseNavLinks.filter((link) => link.name !== "Member List");
 
   return (
     <nav
@@ -143,7 +145,9 @@ export function Navbar() {
 
       {/* Mobile menu */}
       <div
-        className={`md:hidden fixed inset-0 z-50 bg-white transform transition-transform duration-300 ease-in-out ${
+        className={`md:hidden fixed inset-0 z-50 bg-white ${
+          isOpen && scrolled ? "bg-white/90 backdrop-blur-md" : "bg-white"
+        } transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -156,7 +160,7 @@ export function Navbar() {
             <X className="h-6 w-6" />
           </button>
         </div>
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white">
           {navLinks.map((link, index) => (
             <motion.div
               key={link.name}

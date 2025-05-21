@@ -48,16 +48,17 @@ const MemberCard: React.FC<{ member: User }> = ({ member }) => {
       <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
         <div className="flex-shrink-0">
           {member.profile_image_url ? (
-            <Image
-              src={"/assets/rakib.jpeg"}
-              alt={fullName}
-              width={100}
-              height={100}
-              className="rounded-full object-cover"
-            />
+            <div className="relative w-[100px] h-[100px] rounded-full overflow-hidden">
+              <Image
+                src={"/assets/rakib.jpeg"}
+                alt={fullName}
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
           ) : (
-            <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center">
-              <UserIcon className="h-12 w-12 text-gray-400" />
+            <div className="w-[100px] h-[100px] bg-gray-200 rounded-full flex items-center justify-center">
+              <UserIcon className="h-[50px] w-[50px] text-gray-400" />
             </div>
           )}
         </div>
