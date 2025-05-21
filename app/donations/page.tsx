@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { getBrowserClient } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 import { ensureBucketExists, STORAGE_BUCKETS } from "@/lib/storage-utils";
 import { Gift, Copy, UploadCloud, X, ImageIcon, Loader2 } from "lucide-react";
 import { MainLayout } from "@/components/main-layout";
@@ -43,7 +43,7 @@ interface DonationMethod {
   type: "number" | "bank";
   number?: string;
   lines?: DonationMethodLine[];
-  icon?: React.ElementType; // Optional: for icons like Bkash, Nagad logos
+  icon?: React.ElementType;
 }
 
 export default function DonationPage() {
@@ -53,7 +53,7 @@ export default function DonationPage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const supabase = getBrowserClient();
+  const supabase = getSupabase();
 
   const donationMethods: DonationMethod[] = [
     { name: "Bkash (Personal)", number: "01XXXXXXXXX", type: "number" },
