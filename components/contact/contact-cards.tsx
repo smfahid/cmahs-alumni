@@ -63,21 +63,22 @@ const MemberCard: React.FC<{ member: User }> = ({ member }) => {
           )}
         </div>
         <div className="flex-grow text-center sm:text-left">
-          <h3 className="text-xl font-semibold text-gray-800">{fullName}</h3>
-          <div className="mt-1 mb-3 flex flex-wrap justify-center sm:justify-start gap-2">
+          <h3 className="text-xl font-semibold text-gray-800 mb-3">
+            {fullName}{" "}
             {member.blood_group && (
               <span className="text-xs font-medium bg-red-100 text-red-700 px-2 py-1 rounded-full">
                 {member.blood_group}
               </span>
             )}
-            {member.location && ( // Assuming this is a general location like city/district
-              <span className="text-xs font-medium bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
-                {member.location.split(",")[0]}{" "}
-                {/* Show first part of location if comma separated */}
-              </span>
-            )}
-          </div>
+          </h3>
+
           <div className="space-y-2 text-sm text-gray-600">
+            {member.batch && (
+              <div className="flex items-center justify-center sm:justify-start">
+                <GraduationCapIcon className="h-4 w-4 mr-2 text-gray-500" />
+                <span>{member.batch}</span>
+              </div>
+            )}
             {member.phone && (
               <div className="flex items-center justify-center sm:justify-start">
                 <PhoneIcon className="h-4 w-4 mr-2 text-gray-500" />
@@ -90,14 +91,7 @@ const MemberCard: React.FC<{ member: User }> = ({ member }) => {
                 <span>{member.email}</span>
               </div>
             )}
-            {member.batch && (
-              <div className="flex items-center justify-center sm:justify-start">
-                <GraduationCapIcon className="h-4 w-4 mr-2 text-gray-500" />
-                <span>Batch: {member.batch}</span>
-              </div>
-            )}
-            {/* You might want a more specific location field if the one above is too broad */}
-            {/* For example, if 'location' is 'City, Country', you might display it fully here */}
+
             {member.location && (
               <div className="flex items-center justify-center sm:justify-start">
                 <MapPinIcon className="h-4 w-4 mr-2 text-gray-500" />
