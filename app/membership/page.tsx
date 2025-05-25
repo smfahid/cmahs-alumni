@@ -21,6 +21,289 @@ import { getBrowserClient } from "@/lib/supabase";
 import { Upload } from "lucide-react";
 import { ensureBucketExists, STORAGE_BUCKETS } from "@/lib/storage-utils";
 
+const BANGLADESHI_DISTRICTS = [
+  "Bagerhat",
+  "Bandarban",
+  "Barguna",
+  "Barisal",
+  "Bhola",
+  "Bogra",
+  "Brahmanbaria",
+  "Chandpur",
+  "Chapai Nawabganj",
+  "Chattogram",
+  "Chuadanga",
+  "Comilla",
+  "Cox's Bazar",
+  "Dhaka",
+  "Dinajpur",
+  "Faridpur",
+  "Feni",
+  "Gaibandha",
+  "Gazipur",
+  "Gopalganj",
+  "Habiganj",
+  "Jamalpur",
+  "Jashore",
+  "Jhalokati",
+  "Jhenaidah",
+  "Joypurhat",
+  "Khagrachari",
+  "Khulna",
+  "Kishoreganj",
+  "Kurigram",
+  "Kushtia",
+  "Lakshmipur",
+  "Lalmonirhat",
+  "Madaripur",
+  "Magura",
+  "Manikganj",
+  "Meherpur",
+  "Moulvibazar",
+  "Munshiganj",
+  "Mymensingh",
+  "Naogaon",
+  "Narail",
+  "Narayanganj",
+  "Narsingdi",
+  "Natore",
+  "Netrokona",
+  "Nilphamari",
+  "Noakhali",
+  "Pabna",
+  "Panchagarh",
+  "Patuakhali",
+  "Pirojpur",
+  "Rajbari",
+  "Rajshahi",
+  "Rangamati",
+  "Rangpur",
+  "Satkhira",
+  "Shariatpur",
+  "Sherpur",
+  "Sirajganj",
+  "Sunamganj",
+  "Sylhet",
+  "Tangail",
+  "Thakurgaon",
+];
+
+const PROFESSIONS = [
+  "Doctor",
+  "Engineer",
+  "Teacher",
+  "Businessman",
+  "Lawyer",
+  "Farmer",
+  "Government Service",
+  "Private Service",
+  "Student",
+  "Homemaker",
+  "Other",
+];
+
+const MARITAL_STATUS_OPTIONS = ["Single", "Married", "Divorced", "Widowed"];
+
+const COUNTRIES = [
+  "Afghanistan",
+  "Albania",
+  "Algeria",
+  "Andorra",
+  "Angola",
+  "Antigua and Barbuda",
+  "Argentina",
+  "Armenia",
+  "Australia",
+  "Austria",
+  "Azerbaijan",
+  "Bahamas",
+  "Bahrain",
+  "Bangladesh",
+  "Barbados",
+  "Belarus",
+  "Belgium",
+  "Belize",
+  "Benin",
+  "Bhutan",
+  "Bolivia",
+  "Bosnia and Herzegovina",
+  "Botswana",
+  "Brazil",
+  "Brunei",
+  "Bulgaria",
+  "Burkina Faso",
+  "Burundi",
+  "Cabo Verde",
+  "Cambodia",
+  "Cameroon",
+  "Canada",
+  "Central African Republic",
+  "Chad",
+  "Chile",
+  "China",
+  "Colombia",
+  "Comoros",
+  "Congo, Democratic Republic of the",
+  "Congo, Republic of the",
+  "Costa Rica",
+  "Cote d'Ivoire",
+  "Croatia",
+  "Cuba",
+  "Cyprus",
+  "Czech Republic",
+  "Denmark",
+  "Djibouti",
+  "Dominica",
+  "Dominican Republic",
+  "Ecuador",
+  "Egypt",
+  "El Salvador",
+  "Equatorial Guinea",
+  "Eritrea",
+  "Estonia",
+  "Eswatini",
+  "Ethiopia",
+  "Fiji",
+  "Finland",
+  "France",
+  "Gabon",
+  "Gambia",
+  "Georgia",
+  "Germany",
+  "Ghana",
+  "Greece",
+  "Grenada",
+  "Guatemala",
+  "Guinea",
+  "Guinea-Bissau",
+  "Guyana",
+  "Haiti",
+  "Honduras",
+  "Hungary",
+  "Iceland",
+  "India",
+  "Indonesia",
+  "Iran",
+  "Iraq",
+  "Ireland",
+  "Israel",
+  "Italy",
+  "Jamaica",
+  "Japan",
+  "Jordan",
+  "Kazakhstan",
+  "Kenya",
+  "Kiribati",
+  "Korea, North",
+  "Korea, South",
+  "Kosovo",
+  "Kuwait",
+  "Kyrgyzstan",
+  "Laos",
+  "Latvia",
+  "Lebanon",
+  "Lesotho",
+  "Liberia",
+  "Libya",
+  "Liechtenstein",
+  "Lithuania",
+  "Luxembourg",
+  "Madagascar",
+  "Malawi",
+  "Malaysia",
+  "Maldives",
+  "Mali",
+  "Malta",
+  "Marshall Islands",
+  "Mauritania",
+  "Mauritius",
+  "Mexico",
+  "Micronesia",
+  "Moldova",
+  "Monaco",
+  "Mongolia",
+  "Montenegro",
+  "Morocco",
+  "Mozambique",
+  "Myanmar",
+  "Namibia",
+  "Nauru",
+  "Nepal",
+  "Netherlands",
+  "New Zealand",
+  "Nicaragua",
+  "Niger",
+  "Nigeria",
+  "North Macedonia",
+  "Norway",
+  "Oman",
+  "Pakistan",
+  "Palau",
+  "Palestine",
+  "Panama",
+  "Papua New Guinea",
+  "Paraguay",
+  "Peru",
+  "Philippines",
+  "Poland",
+  "Portugal",
+  "Qatar",
+  "Romania",
+  "Russia",
+  "Rwanda",
+  "Saint Kitts and Nevis",
+  "Saint Lucia",
+  "Saint Vincent and the Grenadines",
+  "Samoa",
+  "San Marino",
+  "Sao Tome and Principe",
+  "Saudi Arabia",
+  "Senegal",
+  "Serbia",
+  "Seychelles",
+  "Sierra Leone",
+  "Singapore",
+  "Slovakia",
+  "Slovenia",
+  "Solomon Islands",
+  "Somalia",
+  "South Africa",
+  "South Sudan",
+  "Spain",
+  "Sri Lanka",
+  "Sudan",
+  "Suriname",
+  "Sweden",
+  "Switzerland",
+  "Syria",
+  "Taiwan",
+  "Tajikistan",
+  "Tanzania",
+  "Thailand",
+  "Timor-Leste",
+  "Togo",
+  "Tonga",
+  "Trinidad and Tobago",
+  "Tunisia",
+  "Turkey",
+  "Turkmenistan",
+  "Tuvalu",
+  "Uganda",
+  "Ukraine",
+  "United Arab Emirates",
+  "United Kingdom",
+  "United States of America",
+  "Uruguay",
+  "Uzbekistan",
+  "Vanuatu",
+  "Vatican City",
+  "Venezuela",
+  "Vietnam",
+  "Yemen",
+  "Zambia",
+  "Zimbabwe",
+];
+
 export default function MembershipPage() {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,9 +313,9 @@ export default function MembershipPage() {
   const [profileImageUrl, setProfileImageUrl] = useState("");
   const { toast } = useToast();
   const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: currentYear - 1800 + 1 }, (_, i) =>
-    (1800 + i).toString()
-  );
+  const years = Array.from({ length: currentYear - 1976 + 1 }, (_, i) =>
+    (1976 + i).toString()
+  ).reverse();
 
   const [formData, setFormData] = useState({
     // Personal Information
@@ -46,26 +329,36 @@ export default function MembershipPage() {
     bloodGroup: "",
     fatherName: "",
     motherName: "",
+    nidNumber: "",
 
     // Institution Information
     institution: "Char Mehar Azizia High School",
-    degree: "",
-    department: "",
-    passingYear: "",
+    group: "",
     batchHSC: "",
-    hall: "",
 
-    // Address
+    // Current Address
     addressLine1: "",
     addressLine2: "",
     city: "",
     district: "",
     postcode: "",
-    country: "",
+    country: "Bangladesh",
+
+    // Permanent Address
+    permanentAddressLine1: "",
+    permanentAddressLine2: "",
+    permanentCity: "",
+    permanentDistrict: "",
+    permanentPostcode: "",
+    permanentCountry: "",
 
     // Professional Information
     designation: "",
     professionalInfo: "",
+    profession: "",
+    maritalStatus: "",
+    spouseName: "",
+    numberOfChildren: "",
 
     // Portal Access
     password: "",
@@ -231,6 +524,7 @@ export default function MembershipPage() {
           location: formData.city,
           role: "member",
           is_approved: false,
+          nid_number: formData.nidNumber,
         });
 
         if (userError) throw userError;
@@ -243,19 +537,36 @@ export default function MembershipPage() {
             father_name: formData.fatherName,
             mother_name: formData.motherName,
             institution: formData.institution,
-            degree: formData.degree,
-            department: formData.department,
-            passing_year: formData.passingYear,
+            group: formData.group,
             batch_hsc: formData.batchHSC,
-            hall: formData.hall,
             address_line1: formData.addressLine1,
             address_line2: formData.addressLine2,
             city: formData.city,
             district: formData.district,
             postcode: formData.postcode,
             country: formData.country,
+            permanent_address_line1: formData.permanentAddressLine1,
+            permanent_address_line2: formData.permanentAddressLine2,
+            permanent_city: formData.permanentCity,
+            permanent_district: formData.permanentDistrict,
+            permanent_postcode: formData.permanentPostcode,
+            permanent_country: formData.permanentCountry,
             designation: formData.designation,
             professional_info: formData.professionalInfo,
+            profession: formData.profession,
+            marital_status: formData.maritalStatus,
+            spouse_name:
+              (formData.maritalStatus === "Married" ||
+                formData.maritalStatus === "Widowed") &&
+              formData.spouseName
+                ? formData.spouseName
+                : null,
+            number_of_children:
+              (formData.maritalStatus === "Married" ||
+                formData.maritalStatus === "Widowed") &&
+              formData.numberOfChildren
+                ? parseInt(formData.numberOfChildren)
+                : null,
           });
 
         if (detailsError) throw detailsError;
@@ -282,20 +593,28 @@ export default function MembershipPage() {
         bloodGroup: "",
         fatherName: "",
         motherName: "",
+        nidNumber: "",
         institution: "Char Mehar Azizia High School",
-        degree: "",
-        department: "",
-        passingYear: "",
+        group: "",
         batchHSC: "",
-        hall: "",
         addressLine1: "",
         addressLine2: "",
         city: "",
         district: "",
         postcode: "",
-        country: "",
+        country: "Bangladesh",
+        permanentAddressLine1: "",
+        permanentAddressLine2: "",
+        permanentCity: "",
+        permanentDistrict: "",
+        permanentPostcode: "",
+        permanentCountry: "",
         designation: "",
         professionalInfo: "",
+        profession: "",
+        maritalStatus: "",
+        spouseName: "",
+        numberOfChildren: "",
         password: "",
         confirmPassword: "",
         agreement: false,
@@ -314,7 +633,63 @@ export default function MembershipPage() {
     }
   };
 
+  const validateStep = (currentStep: number): boolean => {
+    // Define strictly required fields for progressing to the next step
+    const strictlyRequiredFields: {
+      [key: number]: Array<keyof typeof formData | "profileImage">;
+    } = {
+      1: [
+        "firstName",
+        "lastName",
+        "mobile",
+        "nidNumber", // NID
+        "gender",
+      ],
+      2: [
+        "batchHSC", // Batch
+        // "addressLine1", // No longer required for step progression
+        // "city", // No longer required for step progression
+      ],
+      // Step 3 and 4 do not have specific fields required to *proceed* to them,
+      // but fields within them (like password or agreement) are validated on final submit.
+    };
+
+    const fieldsToValidate = strictlyRequiredFields[currentStep];
+    if (!fieldsToValidate || fieldsToValidate.length === 0) {
+      return true; // No strict progression validation defined for this step or no fields to validate
+    }
+
+    for (const field of fieldsToValidate) {
+      if (field === "profileImage") {
+        if (!profileImage) {
+          toast({
+            title: "Missing Information",
+            description: "Please upload a profile image to proceed.",
+            variant: "destructive",
+          });
+          return false;
+        }
+      } else if (!formData[field as keyof typeof formData]) {
+        // Create a more readable field name for the toast message
+        const fieldName = field
+          .replace(/([A-Z])/g, " $1") // Add space before capital letters
+          .replace(/^./, (str) => str.toUpperCase()); // Capitalize first letter
+
+        toast({
+          title: "Missing Information",
+          description: `Please fill in the "${fieldName}" field to proceed.`,
+          variant: "destructive",
+        });
+        return false;
+      }
+    }
+    return true;
+  };
+
   const nextStep = () => {
+    if (!validateStep(step)) {
+      return;
+    }
     setStep(step + 1);
     window.scrollTo(0, 0);
   };
@@ -419,7 +794,9 @@ export default function MembershipPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="firstName">First Name</Label>
+                        <Label htmlFor="firstName">
+                          First Name <span className="text-red-500">*</span>
+                        </Label>
                         <Input
                           id="firstName"
                           name="firstName"
@@ -429,7 +806,9 @@ export default function MembershipPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="lastName">Last Name</Label>
+                        <Label htmlFor="lastName">
+                          Last Name <span className="text-red-500">*</span>
+                        </Label>
                         <Input
                           id="lastName"
                           name="lastName"
@@ -440,21 +819,31 @@ export default function MembershipPage() {
                       </div>
                     </div>
 
-                    <div>
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                      />
-                    </div>
-
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="mobile">Mobile</Label>
+                        <Label htmlFor="fatherName">Father's Name</Label>
+                        <Input
+                          id="fatherName"
+                          name="fatherName"
+                          value={formData.fatherName}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="motherName">Mother's Name</Label>
+                        <Input
+                          id="motherName"
+                          name="motherName"
+                          value={formData.motherName}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="mobile">
+                          Mobile <span className="text-red-500">*</span>
+                        </Label>
                         <Input
                           id="mobile"
                           name="mobile"
@@ -474,20 +863,39 @@ export default function MembershipPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="birthday">Birthday</Label>
+                        <Label htmlFor="email">
+                          Email <span className="text-red-500">*</span>
+                        </Label>
                         <Input
-                          id="birthday"
-                          name="birthday"
-                          type="date"
-                          value={formData.birthday}
+                          id="email"
+                          name="email"
+                          type="email"
+                          value={formData.email}
                           onChange={handleChange}
                           required
                         />
                       </div>
                       <div>
-                        <Label htmlFor="gender">Gender</Label>
+                        <Label htmlFor="nidNumber">
+                          NID Number <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                          id="nidNumber"
+                          name="nidNumber"
+                          value={formData.nidNumber}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="gender">
+                          Gender <span className="text-red-500">*</span>
+                        </Label>
                         <Select
                           value={formData.gender}
                           onValueChange={(value) =>
@@ -529,27 +937,6 @@ export default function MembershipPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="fatherName">Father's Name</Label>
-                        <Input
-                          id="fatherName"
-                          name="fatherName"
-                          value={formData.fatherName}
-                          onChange={handleChange}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="motherName">Mother's Name</Label>
-                        <Input
-                          id="motherName"
-                          name="motherName"
-                          value={formData.motherName}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-
                     <div className="flex justify-end">
                       <Button type="button" onClick={nextStep}>
                         Next
@@ -577,42 +964,27 @@ export default function MembershipPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="degree">Degree</Label>
+                        <Label htmlFor="group">Group</Label>
                         <Select
-                          value={formData.degree}
+                          value={formData.group}
                           onValueChange={(value) =>
-                            handleSelectChange("degree", value)
+                            handleSelectChange("group", value)
                           }
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select degree" />
+                            <SelectValue placeholder="Select group" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="SSC">SSC</SelectItem>
-                            <SelectItem value="HSC">HSC</SelectItem>
-                            <SelectItem value="BSc">BSc</SelectItem>
-                            <SelectItem value="MSc">MSc</SelectItem>
-                            <SelectItem value="Hons">Hons</SelectItem>
-                            <SelectItem value="Masters">Masters</SelectItem>
-                            <SelectItem value="MBA">MBA</SelectItem>
-                            <SelectItem value="Other">Other</SelectItem>
+                            <SelectItem value="Science">Science</SelectItem>
+                            <SelectItem value="Commerce">Commerce</SelectItem>
+                            <SelectItem value="Arts">Arts</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       <div>
-                        <Label htmlFor="department">Department</Label>
-                        <Input
-                          id="department"
-                          name="department"
-                          value={formData.department}
-                          onChange={handleChange}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
-                      <div>
-                        <Label htmlFor="batchHSC">Batch (SSC)</Label>
+                        <Label htmlFor="batchHSC">
+                          Batch (SSC) <span className="text-red-500">*</span>
+                        </Label>
                         <Select
                           value={formData.batchHSC}
                           onValueChange={(value) =>
@@ -645,7 +1017,6 @@ export default function MembershipPage() {
                         name="addressLine1"
                         value={formData.addressLine1}
                         onChange={handleChange}
-                        required
                       />
                     </div>
 
@@ -667,7 +1038,6 @@ export default function MembershipPage() {
                           name="city"
                           value={formData.city}
                           onChange={handleChange}
-                          required
                         />
                       </div>
                       <div>
@@ -677,7 +1047,6 @@ export default function MembershipPage() {
                           name="district"
                           value={formData.district}
                           onChange={handleChange}
-                          required
                         />
                       </div>
                     </div>
@@ -694,13 +1063,115 @@ export default function MembershipPage() {
                       </div>
                       <div>
                         <Label htmlFor="country">Country</Label>
-                        <Input
-                          id="country"
-                          name="country"
+                        <Select
                           value={formData.country}
+                          onValueChange={(value) =>
+                            handleSelectChange("country", value)
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select country" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {COUNTRIES.map((countryName) => (
+                              <SelectItem key={countryName} value={countryName}>
+                                {countryName}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <h2 className="text-xl font-semibold mb-4 mt-8">
+                      Permanent Address
+                    </h2>
+
+                    <div>
+                      <Label htmlFor="permanentAddressLine1">
+                        Address Line 1
+                      </Label>
+                      <Input
+                        id="permanentAddressLine1"
+                        name="permanentAddressLine1"
+                        value={formData.permanentAddressLine1}
+                        onChange={handleChange}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="permanentAddressLine2">
+                        Address Line 2
+                      </Label>
+                      <Input
+                        id="permanentAddressLine2"
+                        name="permanentAddressLine2"
+                        value={formData.permanentAddressLine2}
+                        onChange={handleChange}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="permanentCity">City</Label>
+                        <Input
+                          id="permanentCity"
+                          name="permanentCity"
+                          value={formData.permanentCity}
                           onChange={handleChange}
-                          required
                         />
+                      </div>
+                      <div>
+                        <Label htmlFor="permanentDistrict">District</Label>
+                        <Select
+                          value={formData.permanentDistrict}
+                          onValueChange={(value) =>
+                            handleSelectChange("permanentDistrict", value)
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select district" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {BANGLADESHI_DISTRICTS.map((dist) => (
+                              <SelectItem key={dist} value={dist}>
+                                {dist}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="permanentPostcode">Postcode</Label>
+                        <Input
+                          id="permanentPostcode"
+                          name="permanentPostcode"
+                          value={formData.permanentPostcode}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="permanentCountry">Country</Label>
+                        <Select
+                          value={formData.permanentCountry}
+                          onValueChange={(value) =>
+                            handleSelectChange("permanentCountry", value)
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select country" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {COUNTRIES.map((countryName) => (
+                              <SelectItem key={countryName} value={countryName}>
+                                {countryName}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
 
@@ -726,6 +1197,27 @@ export default function MembershipPage() {
                     </h2>
 
                     <div>
+                      <Label htmlFor="profession">Profession</Label>
+                      <Select
+                        value={formData.profession}
+                        onValueChange={(value) =>
+                          handleSelectChange("profession", value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select profession" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {PROFESSIONS.map((prof) => (
+                            <SelectItem key={prof} value={prof}>
+                              {prof}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
                       <Label htmlFor="designation">Designation</Label>
                       <Input
                         id="designation"
@@ -747,6 +1239,55 @@ export default function MembershipPage() {
                         rows={4}
                       />
                     </div>
+
+                    <div>
+                      <Label htmlFor="maritalStatus">Marital Status</Label>
+                      <Select
+                        value={formData.maritalStatus}
+                        onValueChange={(value) =>
+                          handleSelectChange("maritalStatus", value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select marital status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {MARITAL_STATUS_OPTIONS.map((status) => (
+                            <SelectItem key={status} value={status}>
+                              {status}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {(formData.maritalStatus === "Married" ||
+                      formData.maritalStatus === "Widowed") && (
+                      <>
+                        <div>
+                          <Label htmlFor="spouseName">Spouse Name</Label>
+                          <Input
+                            id="spouseName"
+                            name="spouseName"
+                            value={formData.spouseName}
+                            onChange={handleChange}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="numberOfChildren">
+                            Number of Children
+                          </Label>
+                          <Input
+                            id="numberOfChildren"
+                            name="numberOfChildren"
+                            type="number"
+                            value={formData.numberOfChildren}
+                            onChange={handleChange}
+                            min="0"
+                          />
+                        </div>
+                      </>
+                    )}
 
                     <div className="flex justify-between">
                       <Button
@@ -770,7 +1311,9 @@ export default function MembershipPage() {
                     </h2>
 
                     <div>
-                      <Label htmlFor="password">Password</Label>
+                      <Label htmlFor="password">
+                        Password <span className="text-red-500">*</span>
+                      </Label>
                       <div className="relative">
                         <Input
                           id="password"
@@ -797,7 +1340,9 @@ export default function MembershipPage() {
                     </div>
 
                     <div>
-                      <Label htmlFor="confirmPassword">Confirm Password</Label>
+                      <Label htmlFor="confirmPassword">
+                        Confirm Password <span className="text-red-500">*</span>
+                      </Label>
                       <div className="relative">
                         <Input
                           id="confirmPassword"
@@ -833,7 +1378,8 @@ export default function MembershipPage() {
                         I hereby declare that, as a Life Member/Associate Life
                         Member, I shall abide by the rules and regulations of
                         Char Mehar Azizia High School Alumni and support its
-                        activities that will help achieve its objectives.
+                        activities that will help achieve its objectives.{" "}
+                        <span className="text-red-500">*</span>
                       </Label>
                     </div>
 

@@ -85,20 +85,12 @@ export function HeroSection({ images }: { images: HeroImage[] }) {
                       "Connecting generations of alumni for a stronger community"}
                   </p>
                   <div className="flex md:hidden justify-center space-x-4 mt-6">
-                    <Link href="/membership" passHref legacyBehavior>
+                    <Link href="/login" passHref legacyBehavior>
                       <Button
                         variant="outline"
                         className="bg-transparent hover:bg-white/10 text-white border-white"
                       >
-                        Membership
-                      </Button>
-                    </Link>
-                    <Link href="/contact" passHref legacyBehavior>
-                      <Button
-                        variant="outline"
-                        className="bg-transparent hover:bg-white/10 text-white border-white"
-                      >
-                        Contact Us
+                        Membership Login
                       </Button>
                     </Link>
                   </div>

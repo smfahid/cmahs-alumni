@@ -1,8 +1,7 @@
 "use client";
 
 import type React from "react";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { MainLayout } from "@/components/main-layout";
@@ -16,38 +15,36 @@ import { Eye, EyeOff } from "lucide-react";
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [formIsLoading, setFormIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { signIn } = useAuth();
+  const { signIn, user, isLoading: authIsLoading, isAdmin } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
 
+  useEffect(() => {
+    if (user) {
+      router.push("/");
+    }
+  }, [user, authIsLoading, isAdmin, router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setFormIsLoading(true);
 
     try {
-      const { error, data } = await signIn(identifier, password);
+      const result = await signIn(identifier, password);
 
-      if (error) {
+      if (result.error) {
         toast({
           title: "Login Failed",
-          description: error.message,
+          description: result.error.message || "An unknown error occurred.",
           variant: "destructive",
         });
-        return;
-      }
-
-      toast({
-        title: "Login Successful",
-        description: "You have been logged in successfully.",
-      });
-
-      // Check if user is admin and redirect accordingly
-      if (data?.user?.role === "admin") {
-        router.push("/admin");
       } else {
-        router.push("/");
+        toast({
+          title: "Login Successful",
+          description: "You will be redirected shortly.",
+        });
       }
     } catch (error: any) {
       toast({
@@ -56,9 +53,19 @@ export default function LoginPage() {
         variant: "destructive",
       });
     } finally {
-      setIsLoading(false);
+      setFormIsLoading(false);
     }
   };
+
+  if (authIsLoading || user) {
+    return (
+      <MainLayout>
+        <div className="min-h-[calc(100vh-64px)] flex items-center justify-center">
+          <p>Loading...</p>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
@@ -133,8 +140,8 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Signing in..." : "Sign in"}
+              <Button type="submit" className="w-full" disabled={formIsLoading}>
+                {formIsLoading ? "Signing in..." : "Sign in"}
               </Button>
             </div>
           </form>

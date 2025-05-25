@@ -50,7 +50,7 @@ const MemberCard: React.FC<{ member: User }> = ({ member }) => {
           {member.profile_image_url ? (
             <div className="relative w-[100px] h-[100px] rounded-full overflow-hidden">
               <Image
-                src={"/assets/rakib.jpeg"}
+                src={member.profile_image_url}
                 alt={fullName}
                 layout="fill"
                 objectFit="cover"

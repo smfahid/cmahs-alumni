@@ -68,15 +68,14 @@ export default async function ContactPage() {
       committee_type: "EC Council",
       users: {
         id: "user1",
-        first_name: "Rakib",
-        last_name: "",
-        email: "rakib@gmail.com",
-        phone: "01764440404",
-        profile_image_url:
-          "https://via.placeholder.com/100/CCCCCC/808080?Text=Rakib", // Placeholder image
+        first_name: "Md Rezaul Mawla",
+        last_name: "Nablu",
+        email: "mdrm123@gmail.com",
+        phone: "01913824274",
+        profile_image_url: "/assets/nablu-2.png",
         blood_group: "A+",
-        batch: "2001",
-        location: "Guimara, Khagrachodi",
+        batch: "2007",
+        location: "Paris, France",
       },
     },
     {
@@ -85,15 +84,14 @@ export default async function ContactPage() {
       committee_type: "EC Council",
       users: {
         id: "user2",
-        first_name: "Rana",
-        last_name: "",
-        email: "rana@gmail.com",
-        phone: "01717741771",
-        profile_image_url:
-          "https://via.placeholder.com/100/DDDDDD/707070?Text=Rana", // Placeholder image
+        first_name: "Md.Amran Hossain",
+        last_name: "Rony",
+        email: "ahrony62@gmail.com",
+        phone: "01913160380",
+        profile_image_url: "/assets/roni-2.png",
         blood_group: "A+",
-        batch: "2001",
-        location: "Jatrabari, Dhaka",
+        batch: "2000",
+        location: "Dhaka",
       },
     },
     {
@@ -102,62 +100,14 @@ export default async function ContactPage() {
       committee_type: "EC Council",
       users: {
         id: "user3",
-        first_name: "Oronno",
-        last_name: "Anam",
-        email: "oronno@example.com",
-        phone: "+880 1712 345678",
-        profile_image_url: null, // Will show placeholder icon
-        blood_group: "AB+",
-        batch: "2010",
-        location: "Dhaka, Bangladesh",
-      },
-    },
-    {
-      id: "4",
-      position: "Member",
-      committee_type: "EC Council",
-      users: {
-        id: "user4",
-        first_name: "Maksudur",
-        last_name: "Rahman",
-        email: "maksudur@example.com",
-        phone: "+880 1812 345678",
-        profile_image_url: null,
-        blood_group: "B+",
-        batch: "2012",
-        location: "Brahmanbaria, Bangladesh", // Assuming full location
-      },
-    },
-    {
-      id: "5",
-      position: "Member",
-      committee_type: "EC Council",
-      users: {
-        id: "user5",
-        first_name: "Md Iqbal",
-        last_name: "Hossain",
-        email: "iqbal@example.com",
-        phone: "+880 1912 345678",
-        profile_image_url: null,
-        blood_group: "AB+",
-        batch: "2008",
-        location: "Dhaka, Bangladesh", // Assuming full location
-      },
-    },
-    {
-      id: "6",
-      position: "Member",
-      committee_type: "EC Council",
-      users: {
-        id: "user6",
-        first_name: "Obaydul Ahmed",
-        last_name: "Faraz",
-        email: "obaydul@example.com",
-        phone: "+880 1612 345678",
-        profile_image_url: null,
-        blood_group: "O+",
-        batch: "2015",
-        location: "Munshiganj, Bangladesh", // Assuming full location
+        first_name: "H.M.",
+        last_name: "Sorwerddee",
+        email: "adv.hs.sorwerddee@gmail.com",
+        phone: "01765330808",
+        profile_image_url: "/assets/babu-2.png",
+        blood_group: "O-",
+        batch: "2003",
+        location: "Chattogram",
       },
     },
   ];

@@ -27,7 +27,7 @@ export function AuthProvider({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [sessionState, setSessionState] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -38,7 +38,7 @@ export function AuthProvider({
         const {
           data: { session },
         } = await supabase.auth.getSession();
-        setSession(session);
+        setSessionState(session);
         setUser(session?.user ?? null);
 
         if (session?.user) {
@@ -65,15 +65,21 @@ export function AuthProvider({
       const {
         data: { subscription },
       } = supabase.auth.onAuthStateChange(async (_event, session) => {
-        setSession(session);
+        console.log("session->", session);
+        setSessionState(session);
         setUser(session?.user ?? null);
+        console.log("user->", session?.user);
+
         if (session?.user) {
+          console.log("data----->", supabase);
+
           // Re-check admin status on auth state change
           const { data } = await supabase
             .from("users")
             .select("role")
             .eq("id", session.user.id)
             .single();
+          console.log("role->", data?.role);
           setIsAdmin(data?.role === "admin");
         } else {
           setIsAdmin(false); // Reset admin status if no user
@@ -140,7 +146,7 @@ export function AuthProvider({
           await supabase.auth.signOut();
           // Clear local state as well
           setUser(null);
-          setSession(null);
+          setSessionState(null);
           setIsAdmin(false);
           return {
             error: { message: "Your account is pending approval." },
@@ -149,7 +155,7 @@ export function AuthProvider({
         }
         // If login is successful and user is approved (or admin), update state
         setUser(response.data.user as User);
-        setSession(response.data.session);
+        setSessionState(response.data.session);
       } else if (response.error) {
         // Handle errors from signInWithPassword (e.g., wrong password for the resolved email)
         return {
@@ -191,7 +197,7 @@ export function AuthProvider({
       }
 
       setUser(null);
-      setSession(null);
+      setSessionState(null);
       setIsAdmin(false);
       console.log("AuthContext: Local state (user, session, isAdmin) cleared.");
     } catch (error) {
@@ -201,7 +207,7 @@ export function AuthProvider({
 
   const value = {
     user,
-    session,
+    session: sessionState,
     isLoading,
     signIn,
     signOut,
