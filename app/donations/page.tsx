@@ -56,30 +56,18 @@ export default function DonationPage() {
   const supabase = getSupabase();
 
   const donationMethods: DonationMethod[] = [
-    { name: "Bkash (Personal)", number: "01XXXXXXXXX", type: "number" },
-    { name: "Bkash (Agent)", number: "01AAAAAAAAB", type: "number" },
-    { name: "Nagad (Personal)", number: "01YYYYYYYYY", type: "number" },
-    { name: "Nagad (Personal) - 2", number: "01BBBBBBBBC", type: "number" },
+    { name: "Bkash (Personal)", number: "01936190461", type: "number" },
+    { name: "Bkash (Personal)", number: "01764440404", type: "number" },
     {
-      name: "Bank Account Transfer - Primary",
+      name: "Bank Account Transfer",
       type: "bank",
       lines: [
-        { label: "Bank Name", value: "Example Bank Ltd." },
-        { label: "Account Name", value: "Your Organization Name" },
-        { label: "Account Number", value: "1234567890123" },
-        { label: "Branch", value: "Main Branch, City" },
-        { label: "SWIFT Code", value: "EXMPLBDDH" },
-      ],
-    },
-    {
-      name: "Bank Account Transfer - Secondary",
-      type: "bank",
-      lines: [
-        { label: "Bank Name", value: "Another Bank Plc." },
-        { label: "Account Name", value: "Your Org Name - Alt" },
-        { label: "Account Number", value: "9876543210987" },
-        { label: "Branch", value: "Secondary Branch, Town" },
-        { label: "SWIFT Code", value: "ANOTHPKKA" },
+        { label: "Bank Name", value: "Prime Bank Limited" },
+        { label: "Account Name", value: "Md.Rifat Alam Mohim" },
+        { label: "Account Number", value: "2120219020955" },
+        { label: "Branch", value: "Agrabad Brance" },
+        { label: "SWIFT Code", value: "PRBLBDDH015" },
+        { label: "Routing Number", value: "170150130" },
       ],
     },
   ];

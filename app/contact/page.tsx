@@ -158,8 +158,8 @@ export default async function ContactPage() {
                     <div>
                       <h3 className="text-lg font-medium">Address</h3>
                       <p className="text-gray-600">
-                        Char Mehar Azizia High School, Ramdayal Bazar, Char
-                        Azizia
+                        Char Mehar Azizia High School Alumni Association,
+                        Ramdoyal Bazar, Ramgati, Laxmipur - 3730.
                       </p>
                     </div>
                   </div>
@@ -183,7 +183,7 @@ export default async function ContactPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-medium">Phone</h3>
-                      <p className="text-gray-600">+880 1234-567890</p>
+                      <p className="text-gray-600">+880 1764-440404</p>
                     </div>
                   </div>
 
@@ -206,7 +206,7 @@ export default async function ContactPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-medium">Email</h3>
-                      <p className="text-gray-600">info@cmahs.org</p>
+                      <p className="text-gray-600">alumni.cmahs@gmail.com</p>
                     </div>
                   </div>
                 </div>
@@ -214,7 +214,7 @@ export default async function ContactPage() {
 
               <div className="bg-white rounded-lg shadow-md overflow-hidden">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3650.5983460988897!2d90.4226553!3d23.7985508!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDQ3JzU0LjgiTiA5MMKwMjUnMjEuNiJF!5e0!3m2!1sen!2sbd!4v1620120000000!5m2!1sen!2sbd"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3682.1961205074754!2d90.95194717546266!3d22.646475279439144!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3754b5158cb08e2d%3A0x9ec9602841b5758a!2sChar%20Mehar%20Azizia%20High%20School!5e0!3m2!1sen!2sbd!4v1748237470538!5m2!1sen!2sbd"
                   width="100%"
                   height="300"
                   style={{ border: 0 }}

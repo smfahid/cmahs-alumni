@@ -7,13 +7,14 @@ import {
   MapPinIcon,
   UserIcon,
   GraduationCapIcon,
+  Droplets,
 } from "lucide-react";
 
 export function InitiatorPage() {
   // Placeholder data - replace with actual data
   const initiators = [
     {
-      name: "Shahidul Islam Rakib",
+      name: "SHAHIDUL ISLAM RAKIB",
       batch: "2004",
       mobile: "+8801717171717",
       email: "shahidul@gmail.com",
@@ -22,19 +23,20 @@ export function InitiatorPage() {
       imageUrl: "/assets/rakib.png",
     },
     {
-      name: "Rifat Alam Mahim",
+      name: "MD RIFAT ALAM MOHIM",
       batch: "2016",
-      mobile: "+8801824467831",
-      email: "rifat@gmail.com",
+      mobile: "+01305925654",
+      email: "rifatalammohim@gmail.com",
       bloodGroup: "A+",
-      current_location: "Chittagong (In a ship most of the time)",
-      imageUrl: "/assets/rifat.png",
+      current_location: "At Sea / Global Waters",
+      imageUrl: "/assets/rifat-2.png",
     },
   ];
 
   const developer = {
-    name: "S.M.Fahid",
-    title: "Software Engineer at Delineate Inc , Boston, USA",
+    name: "S.M.FAHID",
+    title:
+      "Software Engineer at Delineate Inc, 1010 Massachusetts Ave, Cambridge, MA 02138, US",
     bio: "S.M.Fahid is a passionate software engineer with a knack for creating intuitive and engaging user experiences. He led the development of this website, ensuring it meets the needs of the alumni association and its members.",
     imageUrl: "/assets/fahid.png",
     bloodGroup: "A-",
@@ -66,7 +68,7 @@ export function InitiatorPage() {
     {
       key: "bloodGroup",
       label: "Blood Group",
-      icon: <UserIcon className="w-5 h-5 mr-2 text-primary" />,
+      icon: <Droplets className="w-5 h-5 mr-2 text-primary" />,
     },
     {
       key: "current_location",
@@ -105,7 +107,7 @@ export function InitiatorPage() {
                   className="text-gray-600 leading-relaxed mb-2 flex items-center"
                 >
                   {field.icon}
-                  <span className="font-semibold">{field.label}:</span>{" "}
+
                   {initiatorItem[field.key]}
                 </p>
               ))}
@@ -132,26 +134,26 @@ export function InitiatorPage() {
             <h3 className="text-3xl font-semibold text-gray-800 mb-2">
               {developer.name}
             </h3>
-            <p className="text-xl text-primary-600 mb-4">{developer.title}</p>
+            <p className="text-md text-primary-600 mb-4">{developer.title}</p>
             <p className="text-gray-600 leading-relaxed mb-4">
               {developer.bio}
             </p>
-            <p className="text-gray-600 leading-relaxed mb-2 flex items-center">
+            {/* <p className="text-gray-600 leading-relaxed mb-2 flex items-center">
               <PhoneIcon className="w-5 h-5 mr-2 text-primary" />
               <span className="font-semibold">Mobile:</span> {developer.mobile}
-            </p>
+            </p> */}
             <p className="text-gray-600 leading-relaxed mb-2 flex items-center">
               <MailIcon className="w-5 h-5 mr-2 text-primary" />
-              <span className="font-semibold">Email:</span> {developer.email}
+              {developer.email}
             </p>
-            <p className="text-gray-600 leading-relaxed mb-2 flex items-center">
+            {/* <p className="text-gray-600 leading-relaxed mb-2 flex items-center">
               <UserIcon className="w-5 h-5 mr-2 text-primary" />
               <span className="font-semibold">Blood Group:</span>{" "}
               {developer.bloodGroup}
-            </p>
+            </p> */}
             <p className="text-gray-600 leading-relaxed mb-2 flex items-center">
               <MapPinIcon className="w-5 h-5 mr-2 text-primary" />
-              <span className="font-semibold">Current Location:</span>{" "}
+
               {developer.current_location}
             </p>
           </div>
