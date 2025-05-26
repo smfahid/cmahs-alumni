@@ -80,20 +80,21 @@ export function Footer() {
                   <MapPin className="h-5 w-5 text-primary-300" />
                 </div>
                 <span className="text-gray-300">
-                  Char Mehar Azizia High School, Ramdayal Bazar, Char Azizia
+                  Char Mehar Azizia High School Alumni Association, Ramdoyal
+                  Bazar, Ramgati, Laxmipur - 3730.
                 </span>
               </div>
               <div className="flex items-center">
                 <div className="bg-primary/20 p-2 rounded-lg mr-3">
                   <Phone className="h-5 w-5 text-primary-300" />
                 </div>
-                <span className="text-gray-300">+880 1234-567890</span>
+                <span className="text-gray-300">+880 1764-440404</span>
               </div>
               <div className="flex items-center">
                 <div className="bg-primary/20 p-2 rounded-lg mr-3">
                   <Mail className="h-5 w-5 text-primary-300" />
                 </div>
-                <span className="text-gray-300">info@cmahs.org</span>
+                <span className="text-gray-300">alumni.cmahs@gmail.com</span>
               </div>
             </div>
           </div>

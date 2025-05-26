@@ -47,7 +47,7 @@ export function Navbar() {
     { name: "Gallery", href: "/gallery" },
     { name: "Contact", href: "/contact" },
     { name: "Donations", href: "/donations" },
-    { name: "Initiator", href: "/initiator" },
+    { name: "Campaigner", href: "/initiator" },
   ];
 
   const navLinks = user
@@ -71,7 +71,7 @@ export function Navbar() {
               transition={{ duration: 0.5 }}
               className="text-primary font-bold text-xl md:text-2xl"
             >
-              CMAHS ALUMNI
+              CMAHS ALUMNI ASSOCIATION
             </motion.span>
           </Link>
           <div className="hidden md:flex items-center space-x-1">

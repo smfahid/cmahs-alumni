@@ -16,18 +16,18 @@ export function InitiatorPage() {
     {
       name: "SHAHIDUL ISLAM RAKIB",
       batch: "2004",
-      mobile: "+8801717171717",
-      email: "shahidul@gmail.com",
-      bloodGroup: "A+",
-      current_location: "Khagrachari",
+      mobile: "+8801764440404",
+      email: "1971revolution@gmail.com",
+      bloodGroup: "B+",
+      current_location: "Khagrachari CHT",
       imageUrl: "/assets/rakib.png",
     },
     {
       name: "MD RIFAT ALAM MOHIM",
       batch: "2016",
-      mobile: "+01305925654",
+      mobile: "+8801305925654",
       email: "rifatalammohim@gmail.com",
-      bloodGroup: "A+",
+      bloodGroup: "O+",
       current_location: "At Sea / Global Waters",
       imageUrl: "/assets/rifat-2.png",
     },
@@ -81,7 +81,7 @@ export function InitiatorPage() {
     <div className="container-custom py-12 md:py-20">
       <section className="mb-16">
         <h1 className="text-4xl md:text-5xl font-bold text-primary mb-8 text-center">
-          Our Initiators
+          For your kind info
         </h1>
         {initiators.map((initiatorItem) => (
           <div

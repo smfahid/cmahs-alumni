@@ -56,18 +56,30 @@ export default function DonationPage() {
   const supabase = getSupabase();
 
   const donationMethods: DonationMethod[] = [
-    { name: "Bkash (Personal)", number: "01936190461", type: "number" },
-    { name: "Bkash (Personal)", number: "01764440404", type: "number" },
+    { name: "Bkash/Nagad/Rocket/Upay", number: "01936190461", type: "number" },
+    { name: "Bkash/Nagad/Rocket/Upay", number: "01764440404", type: "number" },
     {
-      name: "Bank Account Transfer",
+      name: "MD.RIFAT ALAM MOHIM",
       type: "bank",
       lines: [
-        { label: "Bank Name", value: "Prime Bank Limited" },
-        { label: "Account Name", value: "Md.Rifat Alam Mohim" },
-        { label: "Account Number", value: "2120219020955" },
-        { label: "Branch", value: "Agrabad Brance" },
-        { label: "SWIFT Code", value: "PRBLBDDH015" },
-        { label: "Routing Number", value: "170150130" },
+        "A/c # 2120219020955",
+        "Prime Bank Limited",
+        "Agrabad Branch",
+        "Routing # 170150130",
+        "Swift Code - PRBLBDDH015",
+        "+8801936190461",
+      ],
+    },
+    {
+      name: "SHAHIDUL ISLAM",
+      type: "bank",
+      lines: [
+        "A/c # 1515104930493001",
+        "Brac Bank Ltd",
+        "Tongee Branch, Gazipur",
+        "Routing # 060331630",
+        "Swift Code - BRAKBDDH",
+        "+8801764440404",
       ],
     },
   ];
@@ -243,27 +255,13 @@ export default function DonationPage() {
                 )}
                 {method.type === "bank" && method.lines && (
                   <div className="space-y-2">
-                    {method.lines.map((line) => (
-                      <div
-                        key={line.label}
-                        className="flex items-center justify-between text-sm text-gray-700"
-                      >
-                        <span>
-                          {line.label}:{" "}
-                          <strong className="font-medium text-gray-900">
-                            {line.value}
-                          </strong>
-                        </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-xs"
-                          onClick={() => handleCopy(line.value, line.label)}
-                        >
-                          <Copy className="h-3 w-3 mr-1" /> Copy
-                        </Button>
+                    {method.type === "bank" && method.lines && (
+                      <div className="text-gray-700 text-sm space-y-1 font-mono">
+                        {method.lines.map((line, idx) => (
+                          <p key={idx}>{line}</p>
+                        ))}
                       </div>
-                    ))}
+                    )}
                   </div>
                 )}
               </div>
@@ -375,7 +373,7 @@ export default function DonationPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="amount">Amount Donated *</Label>
+                    <Label htmlFor="amount">Amount Donated (BDT) *</Label>
                     <Input
                       id="amount"
                       name="amount"
@@ -388,13 +386,14 @@ export default function DonationPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="mobile_no">Mobile No (Optional)</Label>
+                    <Label htmlFor="mobile_no">Mobile No *</Label>
                     <Input
                       id="mobile_no"
                       name="mobile_no"
                       value={formData.mobile_no}
                       onChange={handleChange}
                       placeholder="e.g., 01xxxxxxxxx"
+                      required
                     />
                   </div>
                   <div className="space-y-2">
@@ -409,13 +408,14 @@ export default function DonationPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="batch">Batch/Affiliation (Optional)</Label>
+                    <Label htmlFor="batch">SSC Batch *</Label>
                     <Input
                       id="batch"
                       name="batch"
                       value={formData.batch}
                       onChange={handleChange}
-                      placeholder="e.g., HSC 2005, Supporter"
+                      placeholder="e.g., SSC 2005, Supporter"
+                      required
                     />
                   </div>
                   <div className="space-y-2">

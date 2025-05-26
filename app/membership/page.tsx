@@ -359,7 +359,7 @@ export default function MembershipPage() {
     maritalStatus: "",
     spouseName: "",
     numberOfChildren: "",
-
+    others: "",
     // Portal Access
     password: "",
     confirmPassword: "",
@@ -394,7 +394,6 @@ export default function MembershipPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("formData_1->", formData);
     if (formData.password !== formData.confirmPassword) {
       toast({
         title: "Password Mismatch",
@@ -417,8 +416,6 @@ export default function MembershipPage() {
 
     try {
       const supabase = getBrowserClient();
-
-      console.log("formData_2->", formData);
 
       // if (formData.mobile) {
       //   const { data: existingUser, error: mobileCheckError } = await supabase
@@ -642,7 +639,7 @@ export default function MembershipPage() {
         "firstName",
         "lastName",
         "mobile",
-        "nidNumber", // NID
+        // "nidNumber", // NID
         "gender",
       ],
       2: [
@@ -706,7 +703,7 @@ export default function MembershipPage() {
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="p-6 sm:p-10">
               <h1 className="text-3xl font-bold text-center mb-8">
-                Member Registration
+                Membership Registration
               </h1>
 
               <div className="mb-8">
@@ -760,7 +757,7 @@ export default function MembershipPage() {
                 {step === 1 && (
                   <div className="space-y-6">
                     <h2 className="text-xl font-semibold mb-4">
-                      Personal Information
+                      Personal Information 1
                     </h2>
 
                     <div className="flex justify-center mb-6">
@@ -878,9 +875,7 @@ export default function MembershipPage() {
                         />
                       </div>
                       <div>
-                        <Label htmlFor="nidNumber">
-                          NID Number <span className="text-red-500">*</span>
-                        </Label>
+                        <Label htmlFor="nidNumber">NID Number</Label>
                         <Input
                           id="nidNumber"
                           name="nidNumber"
@@ -948,7 +943,7 @@ export default function MembershipPage() {
                 {step === 2 && (
                   <div className="space-y-6">
                     <h2 className="text-xl font-semibold mb-4">
-                      Institution Information
+                      Personal Information 2
                     </h2>
 
                     <div>
@@ -1011,7 +1006,9 @@ export default function MembershipPage() {
                     </h2>
 
                     <div>
-                      <Label htmlFor="addressLine1">Address Line 1</Label>
+                      <Label htmlFor="addressLine1">
+                        Address Line 1 (Home/Village/Road)
+                      </Label>
                       <Input
                         id="addressLine1"
                         name="addressLine1"
@@ -1021,7 +1018,9 @@ export default function MembershipPage() {
                     </div>
 
                     <div>
-                      <Label htmlFor="addressLine2">Address Line 2</Label>
+                      <Label htmlFor="addressLine2">
+                        Address Line 2 (Post Office)
+                      </Label>
                       <Input
                         id="addressLine2"
                         name="addressLine2"
@@ -1032,7 +1031,7 @@ export default function MembershipPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="city">City</Label>
+                        <Label htmlFor="city">Upazila</Label>
                         <Input
                           id="city"
                           name="city"
@@ -1089,7 +1088,7 @@ export default function MembershipPage() {
 
                     <div>
                       <Label htmlFor="permanentAddressLine1">
-                        Address Line 1
+                        Address Line 1 (Home/Village/Road)
                       </Label>
                       <Input
                         id="permanentAddressLine1"
@@ -1101,7 +1100,7 @@ export default function MembershipPage() {
 
                     <div>
                       <Label htmlFor="permanentAddressLine2">
-                        Address Line 2
+                        Address Line 2 (Post Office)
                       </Label>
                       <Input
                         id="permanentAddressLine2"
@@ -1193,43 +1192,13 @@ export default function MembershipPage() {
                 {step === 3 && (
                   <div className="space-y-6">
                     <h2 className="text-xl font-semibold mb-4">
-                      Professional Information
+                      Personal Information 3
                     </h2>
 
                     <div>
-                      <Label htmlFor="profession">Profession</Label>
-                      <Select
-                        value={formData.profession}
-                        onValueChange={(value) =>
-                          handleSelectChange("profession", value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select profession" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {PROFESSIONS.map((prof) => (
-                            <SelectItem key={prof} value={prof}>
-                              {prof}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="designation">Designation</Label>
-                      <Input
-                        id="designation"
-                        name="designation"
-                        value={formData.designation}
-                        onChange={handleChange}
-                      />
-                    </div>
-
-                    <div>
                       <Label htmlFor="professionalInfo">
-                        Professional Info
+                        Professional Info (Organization's
+                        name/Designation/Office address)
                       </Label>
                       <Textarea
                         id="professionalInfo"
@@ -1289,6 +1258,19 @@ export default function MembershipPage() {
                       </>
                     )}
 
+                    <div>
+                      <Label htmlFor="others">
+                        Others (Educaltional Achievement/ Expertise/ Experience
+                        etc)
+                      </Label>
+                      <Input
+                        id="others"
+                        name="others"
+                        value={formData.others}
+                        onChange={handleChange}
+                      />
+                    </div>
+
                     <div className="flex justify-between">
                       <Button
                         type="button"
@@ -1307,7 +1289,7 @@ export default function MembershipPage() {
                 {step === 4 && (
                   <div className="space-y-6">
                     <h2 className="text-xl font-semibold mb-4">
-                      Account Information
+                      Personal Information 4
                     </h2>
 
                     <div>
