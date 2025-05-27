@@ -110,14 +110,14 @@ export function AdminSidebar() {
           </ul>
 
           <div className="mt-8 pt-4 border-t border-gray-800">
-            <Button
+            {/* <Button
               variant="ghost"
               className="w-full justify-start text-gray-300 hover:bg-gray-800 hover:text-white p-3"
               onClick={() => signOut()}
             >
               <LogOut className="h-5 w-5 mr-3" />
               Logout
-            </Button>
+            </Button> */}
             <Link
               href="/"
               className={`flex items-center p-3 rounded-md transition-colors mt-2 ${

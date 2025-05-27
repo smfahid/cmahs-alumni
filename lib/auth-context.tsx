@@ -71,18 +71,36 @@ export function AuthProvider({
         console.log("user->", session?.user);
 
         if (session?.user) {
-          console.log("data----->", supabase);
+          console.log(
+            "AuthContext: User found in session, fetching role for ID:",
+            session.user.id
+          );
+          try {
+            const { data, error } = await supabase
+              .from("users")
+              .select("role")
+              .eq("id", session.user.id)
+              .single();
 
-          // Re-check admin status on auth state change
-          const { data } = await supabase
-            .from("users")
-            .select("role")
-            .eq("id", session.user.id)
-            .single();
-          console.log("role->", data?.role);
-          setIsAdmin(data?.role === "admin");
+            if (error) {
+              console.error(
+                "AuthContext: Error fetching user role in onAuthStateChange:",
+                error
+              );
+              setIsAdmin(false);
+            } else {
+              console.log("AuthContext: Fetched role data:", data);
+              setIsAdmin(data?.role === "admin");
+            }
+          } catch (e) {
+            console.error("AuthContext: Exception fetching user role:", e);
+            setIsAdmin(false);
+          }
         } else {
-          setIsAdmin(false); // Reset admin status if no user
+          console.log(
+            "AuthContext: No user in session, setting isAdmin to false."
+          );
+          setIsAdmin(false);
         }
         setIsLoading(false);
       });
