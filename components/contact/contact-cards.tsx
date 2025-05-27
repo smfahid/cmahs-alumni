@@ -88,7 +88,7 @@ const MemberCard: React.FC<{ member: User }> = ({ member }) => {
             {member.email && (
               <div className="flex items-center justify-center sm:justify-start">
                 <MailIcon className="h-4 w-4 mr-2 text-gray-500" />
-                <span>{member.email}</span>
+                <span className="text-sm break-all">{member.email}</span>
               </div>
             )}
 
