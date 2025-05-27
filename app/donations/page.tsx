@@ -254,14 +254,23 @@ export default function DonationPage() {
                   </div>
                 )}
                 {method.type === "bank" && method.lines && (
-                  <div className="space-y-2">
-                    {method.type === "bank" && method.lines && (
-                      <div className="text-gray-700 text-sm space-y-1 font-mono">
-                        {method.lines.map((line, idx) => (
-                          <p key={idx}>{line}</p>
-                        ))}
-                      </div>
-                    )}
+                  <div className="relative text-gray-700 text-sm space-y-1 font-mono">
+                    {method.lines.map((line, idx) => (
+                      <p key={idx}>{line}</p>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="absolute top-0 right-0"
+                      onClick={() => {
+                        const fullText = [method.name, ...method.lines].join(
+                          "\n"
+                        );
+                        handleCopy(fullText, `${method.name} details`);
+                      }}
+                    >
+                      <Copy className="h-3 w-3 " /> Copy Info
+                    </Button>
                   </div>
                 )}
               </div>
