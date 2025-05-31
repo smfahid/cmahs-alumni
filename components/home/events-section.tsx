@@ -55,13 +55,11 @@ export function EventsSection({ events }: { events: Event[] }) {
                     className="object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="text-xl font-bold text-white">
-                      {event.title}
-                    </h3>
-                  </div>
                 </div>
                 <div className="p-6">
+                  <h3 className="text-xl font-bold text-gray-800 mb-3">
+                    {event.title}
+                  </h3>
                   <div className="flex items-center text-gray-600 mb-3">
                     <Calendar className="h-4 w-4 mr-2 text-primary" />
                     <span className="text-sm font-medium">

@@ -13,6 +13,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { getBrowserClient } from "@/lib/supabase"; // Use browser client for client-side mutations
 import { ArrowLeft, ImageIcon, Loader2 } from "lucide-react";
 import { STORAGE_BUCKETS } from "@/lib/storage-utils"; // Assuming you have this for bucket names
+import { format as formatDateFns, parseISO } from "date-fns"; // Import date-fns functions
 
 interface Event {
   id: string;
@@ -63,12 +64,17 @@ export default function EditEventPage() {
       if (!data) throw new Error("Event not found");
 
       const event = data as Event;
+      let localEventDateString = "";
+      if (event.event_date) {
+        const dateObject = parseISO(event.event_date); // Parse the UTC string from DB
+        // Format to YYYY-MM-DDTHH:mm in the user's local timezone
+        localEventDateString = formatDateFns(dateObject, "yyyy-MM-dd'T'HH:mm");
+      }
+
       setFormData({
         title: event.title,
         description: event.description,
-        eventDate: event.event_date
-          ? new Date(event.event_date).toISOString().substring(0, 16)
-          : "", // Format for datetime-local
+        eventDate: localEventDateString, // Use the locally formatted date string
         location: event.location || "",
       });
       if (event.image_url) {

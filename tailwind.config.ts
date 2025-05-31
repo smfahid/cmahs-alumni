@@ -124,6 +124,22 @@ const config: Config = {
           },
         },
       },
+      fontFamily: {
+        sans: [
+          '"Noto Sans Bengali"',
+          "-apple-system",
+          "BlinkMacSystemFont",
+          '"Segoe UI"',
+          "Roboto",
+        ],
+        bengali: [
+          '"Noto Sans Bengali"',
+          "-apple-system",
+          "BlinkMacSystemFont",
+          '"Segoe UI"',
+          "Roboto",
+        ],
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
