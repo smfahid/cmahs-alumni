@@ -11,7 +11,7 @@ export default function AboutPage() {
       "Our association organizes a variety of events, programs, and initiatives designed to strengthen bonds, provide networking opportunities, and celebrate the achievements of our members. We believe in the power of collective effort to make a positive impact on our community and the school.",
       "Founded on the principles of camaraderie, service, and excellence, the CMAHS Alumni Association aims to be a beacon for current students and a source of pride for all who have walked the halls of Char Mehar Azizia High School.",
     ],
-    imageUrl: "/images/about-us-banner.jpg", // Replace with your actual image path
+    imageUrl: "/assets/about-us.jpeg",
     imageAlt: "CMAHS Alumni gathering",
     mission: {
       title: "Our Mission",

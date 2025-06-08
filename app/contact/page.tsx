@@ -805,13 +805,13 @@ export default async function ContactPage() {
       users: {
         id: "user47",
         first_name: "Sahara Islam ",
-        last_name: "Shaown",
+        last_name: "Shawon",
         email: "1971revolution@gmail.com",
         phone: "01764440404",
         profile_image_url: "/profile-image/shawon.png",
         blood_group: "A+",
         batch: "2022",
-        location: null,
+        location: "Dhaka",
       },
     },
     {
@@ -827,7 +827,7 @@ export default async function ContactPage() {
         profile_image_url: "/profile-image/faijul.png",
         blood_group: "B+",
         batch: "2000",
-        location: null,
+        location: "Dhaka",
       },
     },
     {

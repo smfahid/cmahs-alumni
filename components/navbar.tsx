@@ -14,9 +14,6 @@ export function Navbar() {
   const pathname = usePathname();
   const { user, signOut, isAdmin } = useAuth();
 
-  console.log("Navbar: user", user);
-  console.log("Navbar: isAdmin", isAdmin);
-
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 10) {
@@ -41,7 +38,7 @@ export function Navbar() {
   const baseNavLinks = [
     { name: "Home", href: "/" },
     { name: "About Us", href: "/about" },
-    { name: "Events", href: "/events" },
+    // { name: "Events", href: "/events" },
     { name: "Membership", href: "/membership" },
     { name: "Member List", href: "/member-list" },
     { name: "Gallery", href: "/gallery" },

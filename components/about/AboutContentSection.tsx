@@ -71,7 +71,7 @@ export function AboutContentSection({
           {imageUrl && (
             <div className="order-1 md:order-2 relative w-full h-64 md:h-96 rounded-lg overflow-hidden shadow-lg">
               <Image
-                src={"/assets/img-17.jpeg"}
+                src={imageUrl}
                 alt={imageAlt}
                 layout="fill"
                 objectFit="cover"

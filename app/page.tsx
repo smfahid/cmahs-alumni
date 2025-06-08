@@ -53,7 +53,7 @@ export default async function Home() {
       <HeroSection images={heroImages} />
       <AboutSection about={about} />
       <EventsSection events={events} />
-      <NewsSection news={news} />
+      {/* <NewsSection news={news} /> */}
     </MainLayout>
   );
 }
