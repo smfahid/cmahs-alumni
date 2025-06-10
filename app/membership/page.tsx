@@ -456,8 +456,6 @@ export default function MembershipPage() {
         },
       });
 
-      console.log("authData->", authData);
-
       if (authError) {
         // Handle rate limiting error specifically
         if (authError.message.includes("For security purposes")) {
@@ -516,7 +514,6 @@ export default function MembershipPage() {
           profile_image_url: profileImagePath,
           blood_group: formData.bloodGroup,
           gender: formData.gender,
-          birthday: formData.birthday,
           batch: formData.batchHSC,
           location: formData.city,
           role: "member",
@@ -585,7 +582,6 @@ export default function MembershipPage() {
         email: "",
         mobile: "",
         altMobile: "",
-        birthday: "",
         gender: "",
         bloodGroup: "",
         fatherName: "",
@@ -1031,7 +1027,7 @@ export default function MembershipPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="city">Upazila</Label>
+                        <Label htmlFor="city">Upazila/Thana</Label>
                         <Input
                           id="city"
                           name="city"
@@ -1112,7 +1108,7 @@ export default function MembershipPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="permanentCity">City</Label>
+                        <Label htmlFor="permanentCity">Upazila/Thana</Label>
                         <Input
                           id="permanentCity"
                           name="permanentCity"
