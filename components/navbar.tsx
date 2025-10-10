@@ -17,11 +17,51 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+interface ExtendedUser {
+  id: string;
+  email?: string;
+  first_name?: string;
+  last_name?: string;
+  profile_image_url?: string;
+}
+
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const { user, signOut, isAdmin } = useAuth();
+
+  // Get user initials for avatar fallback
+  const getUserInitials = () => {
+    if (!user) return "U";
+
+    const userData = user as ExtendedUser;
+
+    if (userData.first_name) {
+      // If we have first name, use its first letter
+      const firstInitial = userData.first_name.charAt(0).toUpperCase();
+      // If we have last name too, use both initials
+      if (userData.last_name) {
+        const lastInitial = userData.last_name.charAt(0).toUpperCase();
+        return `${firstInitial}${lastInitial}`;
+      }
+      return firstInitial;
+    }
+
+    // Fallback to email first letter
+    if (userData.email) {
+      return userData.email.charAt(0).toUpperCase();
+    }
+
+    return "U";
+  };
+
+  // Get profile image URL
+  const getProfileImageUrl = () => {
+    if (!user) return null;
+    const userData = user as ExtendedUser;
+    return userData.profile_image_url || null;
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -61,18 +101,21 @@ export function Navbar() {
   const baseNavLinks = [
     { name: "Home", href: "/" },
     { name: "About Us", href: "/about" },
-    // { name: "Events", href: "/events" },
-    { name: "Membership", href: "/membership" },
-    { name: "Member List", href: "/member-list" },
+    { name: "Members", href: "/member-list" },
     { name: "Gallery", href: "/gallery" },
     { name: "Contact", href: "/contact" },
     { name: "Donations", href: "/donations" },
     { name: "Campaigner", href: "/initiator" },
   ];
 
-  const navLinks = user
-    ? baseNavLinks.filter((link) => link.name !== "Membership")
-    : baseNavLinks.filter((link) => link.name !== "Member List");
+  const navLinks = !user
+    ? baseNavLinks.filter(
+        (link) =>
+          link.name !== "Members" &&
+          link.name !== "Contact" &&
+          link.name !== "Gallery"
+      )
+    : baseNavLinks;
 
   // Check if we're on homepage - only homepage should have transparent navbar at top
   const isHomePage = pathname === "/";
@@ -82,7 +125,7 @@ export function Navbar() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out ${
         scrolled || !isHomePage
           ? "bg-white/80 backdrop-blur-2xl shadow-soft py-3"
-          : "bg-transparent py-4 md:py-5"
+          : "bg-black/20 backdrop-blur-md py-4 md:py-5"
       }`}
     >
       <div className="container-custom">
@@ -136,9 +179,14 @@ export function Navbar() {
                     <DropdownMenuTrigger asChild>
                       <button className="rounded-full ring-2 ring-primary/20 hover:ring-primary/40 transition-all duration-200 p-0.5 focus:outline-none focus:ring-2 focus:ring-primary">
                         <Avatar className="h-9 w-9">
-                          <AvatarImage src="/placeholder-user.jpg" alt="User" />
+                          <AvatarImage
+                            src={
+                              getProfileImageUrl() || "/placeholder-user.jpg"
+                            }
+                            alt="User profile"
+                          />
                           <AvatarFallback className="bg-primary text-white text-sm font-medium">
-                            U
+                            {getUserInitials()}
                           </AvatarFallback>
                         </Avatar>
                       </button>
@@ -148,7 +196,19 @@ export function Navbar() {
                       className="w-56 rounded-xl shadow-xl border-border/50"
                     >
                       <DropdownMenuLabel className="text-[15px]">
-                        My Account
+                        <div className="flex flex-col">
+                          <span className="font-semibold">
+                            {(() => {
+                              const userData = user as ExtendedUser;
+                              return userData?.first_name && userData?.last_name
+                                ? `${userData.first_name} ${userData.last_name}`
+                                : userData?.first_name || user?.email || "User";
+                            })()}
+                          </span>
+                          <span className="text-xs text-muted-foreground font-normal">
+                            {user?.email}
+                          </span>
+                        </div>
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
@@ -207,7 +267,7 @@ export function Navbar() {
                       className={`rounded-xl shadow-sm text-[15px] h-9 px-5 transition-all duration-200 ${
                         scrolled || !isHomePage
                           ? "bg-primary hover:bg-primary-600"
-                          : "bg-white text-primary hover:bg-white/90"
+                          : "bg-white text-primary hover:bg-white/90 shadow-lg"
                       }`}
                     >
                       Sign In
@@ -223,7 +283,7 @@ export function Navbar() {
               className={`inline-flex items-center justify-center p-2.5 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary ${
                 scrolled || !isHomePage
                   ? "text-foreground hover:bg-primary-50"
-                  : "text-white hover:bg-white/10"
+                  : "text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm"
               }`}
               aria-expanded={isOpen}
             >
@@ -296,8 +356,8 @@ export function Navbar() {
                       href={link.href}
                       className={`block px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                         pathname === link.href
-                          ? "text-white bg-primary shadow-sm"
-                          : "text-foreground bg-white hover:text-primary hover:bg-primary-50 active:scale-[0.98] shadow-sm border border-border/50"
+                          ? "text-primary font-semibold"
+                          : "text-foreground hover:text-primary active:scale-[0.98]"
                       }`}
                       onClick={closeMenu}
                     >
@@ -318,7 +378,7 @@ export function Navbar() {
                         }}
                       >
                         <Link href="/admin" onClick={closeMenu}>
-                          <div className="px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 text-white bg-primary shadow-sm">
+                          <div className="px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 text-primary font-semibold">
                             Admin Dashboard
                           </div>
                         </Link>
@@ -335,7 +395,7 @@ export function Navbar() {
                       }}
                     >
                       <Link href="/profile" onClick={closeMenu}>
-                        <div className="block px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 text-foreground bg-white hover:text-primary hover:bg-primary-50 active:scale-[0.98] shadow-sm border border-border/50">
+                        <div className="block px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 text-foreground hover:text-primary active:scale-[0.98]">
                           <div className="flex items-center">My Profile</div>
                         </div>
                       </Link>
@@ -351,7 +411,7 @@ export function Navbar() {
                       }}
                     >
                       <Link href="/settings" onClick={closeMenu}>
-                        <div className="block px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 text-foreground bg-white hover:text-primary hover:bg-primary-50 active:scale-[0.98] shadow-sm border border-border/50">
+                        <div className="block px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 text-foreground hover:text-primary active:scale-[0.98]">
                           Settings
                         </div>
                       </Link>
@@ -367,7 +427,7 @@ export function Navbar() {
                       }}
                     >
                       <div
-                        className="block px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 text-destructive hover:bg-destructive/10 hover:text-destructive bg-white active:scale-[0.98] shadow-sm border border-border/50 cursor-pointer"
+                        className="block px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 text-destructive hover:text-destructive active:scale-[0.98] cursor-pointer"
                         onClick={async () => {
                           await signOut();
                           closeMenu();
@@ -388,7 +448,7 @@ export function Navbar() {
                     }}
                   >
                     <Link href="/login" onClick={closeMenu}>
-                      <div className="block px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 text-white bg-primary shadow-sm">
+                      <div className="block px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 text-primary font-semibold">
                         Sign In
                       </div>
                     </Link>

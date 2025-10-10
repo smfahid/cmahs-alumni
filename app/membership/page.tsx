@@ -20,6 +20,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { getBrowserClient } from "@/lib/supabase";
 import { Upload } from "lucide-react";
 import { ensureBucketExists, STORAGE_BUCKETS } from "@/lib/storage-utils";
+import { ImageCropDialog } from "@/components/ImageCropDialog";
 
 const BANGLADESHI_DISTRICTS = [
   "Bagerhat",
@@ -309,8 +310,10 @@ export default function MembershipPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profileImageUrl, setProfileImageUrl] = useState("");
+  const [cropDialogOpen, setCropDialogOpen] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+  const [croppedImageBlob, setCroppedImageBlob] = useState<Blob | null>(null);
   const { toast } = useToast();
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear - 1976 + 1 }, (_, i) =>
@@ -384,11 +387,62 @@ export default function MembershipPage() {
   };
 
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setProfileImage(file);
-      setProfileImageUrl(URL.createObjectURL(file));
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select an image file.",
+        variant: "destructive",
+      });
+      return;
     }
+
+    // Validate file size (10MB limit)
+    if (file.size > 10 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please select an image smaller than 10MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Create image URL for cropping
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const imageUrl = event.target?.result as string;
+      setImageToCrop(imageUrl);
+      setCropDialogOpen(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Handle crop completion
+  const handleCropComplete = (croppedBlob: Blob) => {
+    setCroppedImageBlob(croppedBlob);
+
+    // Clean up old preview URL
+    if (profileImageUrl && profileImageUrl.startsWith("blob:")) {
+      URL.revokeObjectURL(profileImageUrl);
+    }
+
+    // Create preview URL from blob
+    const previewUrl = URL.createObjectURL(croppedBlob);
+    setProfileImageUrl(previewUrl);
+
+    toast({
+      title: "Image cropped",
+      description: "Your profile picture is ready.",
+    });
+  };
+
+  // Handle crop dialog close
+  const handleCropDialogClose = () => {
+    setCropDialogOpen(false);
+    setImageToCrop(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -474,8 +528,8 @@ export default function MembershipPage() {
 
       let profileImagePath = "";
 
-      // Upload profile image if exists
-      if (profileImage && authData.user) {
+      // Upload cropped profile image if exists
+      if (croppedImageBlob && authData.user) {
         // Ensure the bucket exists before uploading
         const bucketExists = await ensureBucketExists(STORAGE_BUCKETS.MEMBERS);
 
@@ -485,13 +539,16 @@ export default function MembershipPage() {
           );
         }
 
-        const fileExt = profileImage.name.split(".").pop();
-        const fileName = `${authData.user.id}.${fileExt}.${Date.now()}`;
+        const fileName = `${authData.user.id}.jpg.${Date.now()}`;
         const filePath = `profiles/${fileName}`;
 
         const { error: uploadError } = await supabase.storage
           .from(STORAGE_BUCKETS.MEMBERS)
-          .upload(filePath, profileImage);
+          .upload(filePath, croppedImageBlob, {
+            contentType: "image/jpeg",
+            cacheControl: "3600",
+            upsert: true,
+          });
 
         if (uploadError) throw uploadError;
 
@@ -611,8 +668,12 @@ export default function MembershipPage() {
         confirmPassword: "",
         agreement: false,
       });
-      setProfileImage(null);
+      // Clean up image states
+      if (profileImageUrl && profileImageUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(profileImageUrl);
+      }
       setProfileImageUrl("");
+      setCroppedImageBlob(null);
       setStep(1);
     } catch (error: any) {
       toast({
@@ -653,7 +714,7 @@ export default function MembershipPage() {
 
     for (const field of fieldsToValidate) {
       if (field === "profileImage") {
-        if (!profileImage) {
+        if (!croppedImageBlob) {
           toast({
             title: "Missing Information",
             description: "Please upload a profile image to proceed.",
@@ -1404,6 +1465,18 @@ export default function MembershipPage() {
           </div>
         </div>
       </div>
+
+      {/* Image Crop Dialog */}
+      {imageToCrop && (
+        <ImageCropDialog
+          open={cropDialogOpen}
+          imageSrc={imageToCrop}
+          onClose={handleCropDialogClose}
+          onCropComplete={handleCropComplete}
+          aspectRatio={1}
+          circularCrop={true}
+        />
+      )}
     </MainLayout>
   );
 }

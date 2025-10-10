@@ -30,19 +30,19 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Get user role to determine admin status
-    const { data: roleData, error: roleError } = await supabase
+    // Get user profile data (role, name, and image)
+    const { data: userData, error: userError } = await supabase
       .from("users")
-      .select("role")
+      .select("role, first_name, last_name, profile_image_url")
       .eq("id", session.user.id)
       .single();
 
-    if (roleError) {
-      console.error("Role fetch error:", roleError);
-      // Don't fail the request if role fetch fails, just set isAdmin to false
+    if (userError) {
+      console.error("User data fetch error:", userError);
+      // Don't fail the request if user fetch fails, just use basic data
     }
 
-    const isAdmin = roleData?.role?.toString().toUpperCase() === "ADMIN";
+    const isAdmin = userData?.role?.toString().toUpperCase() === "ADMIN";
 
     return NextResponse.json({
       user: {
@@ -50,6 +50,9 @@ export async function GET(request: NextRequest) {
         email: session.user.email,
         phone: session.user.phone,
         created_at: session.user.created_at,
+        first_name: userData?.first_name || null,
+        last_name: userData?.last_name || null,
+        profile_image_url: userData?.profile_image_url || null,
       },
       session: session,
       isAdmin,
