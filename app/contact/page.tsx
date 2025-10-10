@@ -1,6 +1,5 @@
 import { MainLayout } from "@/components/main-layout";
 import { ContactCards } from "@/components/contact/contact-cards";
-import { getSupabase } from "@/lib/supabase";
 
 interface User {
   id: string;
@@ -19,45 +18,6 @@ interface CommitteeMember {
   position: string;
   committee_type: string;
   users: User;
-}
-
-async function getCommitteeMembers() {
-  const supabase = getSupabase();
-
-  const { data: members } = await supabase
-    .from("committee_members")
-    .select(
-      `
-      id,
-      position,
-      committee_type,
-      users (
-        id,
-        first_name,
-        last_name,
-        email,
-        phone,
-        profile_image_url,
-        blood_group,
-        batch,
-        location
-      )
-    `
-    )
-    .order("position", { ascending: true });
-
-  // Group by committee type
-  const boardMembers =
-    members?.filter((m) => m.committee_type === "board_of_trustees") || [];
-  const ecMembers =
-    members?.filter((m) => m.committee_type === "ec_council") || [];
-
-  // No board members shown in this specific image part
-
-  return {
-    boardMembers,
-    ecMembers,
-  };
 }
 
 export default async function ContactPage() {

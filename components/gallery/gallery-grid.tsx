@@ -2,29 +2,66 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { X } from "lucide-react";
+import { format } from "date-fns";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface GalleryImage {
   id: string;
-  title?: string;
-  description?: string;
+  event_name: string | null;
+  event_date: string | null;
+  description: string | null;
   image_url: string;
+  is_hero: boolean;
   created_at: string;
+}
+
+interface GroupedGallery {
+  date: string;
+  eventName: string;
+  images: GalleryImage[];
 }
 
 interface GalleryGridProps {
   images: GalleryImage[];
-  totalPages: number;
-  currentPage: number;
 }
 
-export function GalleryGrid({
-  images,
-  totalPages,
-  currentPage,
-}: Readonly<GalleryGridProps>) {
+function groupImagesByEventAndDate(images: GalleryImage[]): GroupedGallery[] {
+  const grouped = new Map<string, GalleryImage[]>();
+
+  images.forEach((image) => {
+    const date =
+      image.event_date || format(new Date(image.created_at), "yyyy-MM-dd");
+    const key = date;
+
+    if (!grouped.has(key)) {
+      grouped.set(key, []);
+    }
+    grouped.get(key)!.push(image);
+  });
+
+  // Convert to array and sort by date (newest first)
+  const result: GroupedGallery[] = [];
+  Array.from(grouped.entries())
+    .sort(([dateA], [dateB]) => dateB.localeCompare(dateA))
+    .forEach(([date, images]) => {
+      // Find the last event name for this date (most recent upload)
+      const eventName =
+        images.find((img) => img.event_name)?.event_name || "Untitled Event";
+      result.push({ date, eventName, images });
+    });
+
+  return result;
+}
+
+export function GalleryGrid({ images }: Readonly<GalleryGridProps>) {
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+  const groupedGalleries = groupImagesByEventAndDate(images);
 
   const openLightbox = (image: GalleryImage) => {
     setSelectedImage(image);
@@ -38,90 +75,63 @@ export function GalleryGrid({
 
   return (
     <>
-      {images.length === 0 ? (
+      {groupedGalleries.length === 0 ? (
         <div className="text-center text-gray-500 py-12">
           No images available in the gallery.
         </div>
       ) : (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {images.map((image) => (
-              <div
-                key={image.id}
-                className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transform transition-transform hover:scale-105"
-                onClick={() => openLightbox(image)}
-              >
-                <div className="relative h-48 sm:h-56">
-                  <Image
-                    src={
-                      image.image_url || "/placeholder.svg?height=200&width=300"
-                    }
-                    alt={image.title || "Gallery image"}
-                    fill
-                    className="object-cover"
-                  />
+        <Accordion
+          type="multiple"
+          defaultValue={groupedGalleries.map((_, index) => `item-${index}`)}
+          className="w-full"
+        >
+          {groupedGalleries.map((group, index) => (
+            <AccordionItem key={group.date} value={`item-${index}`}>
+              <AccordionTrigger className="hover:no-underline">
+                <div className="text-left">
+                  <h2 className="text-3xl font-bold text-gray-800">
+                    {group.eventName}
+                  </h2>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {format(new Date(group.date), "MMMM d, yyyy")} •{" "}
+                    {group.images.length} image
+                    {group.images.length !== 1 ? "s" : ""}
+                  </p>
                 </div>
-                {image.title && (
-                  <div className="p-3">
-                    <h3 className="text-sm font-medium truncate">
-                      {image.title}
-                    </h3>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {totalPages > 1 && (
-            <div className="flex justify-center mt-8 space-x-2">
-              <Link
-                href={`/gallery?page=${currentPage > 1 ? currentPage - 1 : 1}`}
-                aria-disabled={currentPage <= 1}
-                tabIndex={currentPage <= 1 ? -1 : undefined}
-                className={`inline-flex items-center px-4 py-2 border rounded-md ${
-                  currentPage <= 1
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                <ChevronLeft className="h-4 w-4 mr-1" />
-                Previous
-              </Link>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <Link
-                    key={page}
-                    href={`/gallery?page=${page}`}
-                    className={`inline-flex items-center px-4 py-2 border rounded-md ${
-                      currentPage === page
-                        ? "bg-primary text-white"
-                        : "bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
-                  >
-                    {page}
-                  </Link>
-                )
-              )}
-
-              <Link
-                href={`/gallery?page=${
-                  currentPage < totalPages ? currentPage + 1 : totalPages
-                }`}
-                aria-disabled={currentPage >= totalPages}
-                tabIndex={currentPage >= totalPages ? -1 : undefined}
-                className={`inline-flex items-center px-4 py-2 border rounded-md ${
-                  currentPage >= totalPages
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                Next
-                <ChevronRight className="h-4 w-4 ml-1" />
-              </Link>
-            </div>
-          )}
-        </>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-4">
+                  {group.images.map((image) => (
+                    <div
+                      key={image.id}
+                      className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transform transition-transform hover:scale-105"
+                      onClick={() => openLightbox(image)}
+                    >
+                      <div className="relative h-48 sm:h-56">
+                        <Image
+                          src={
+                            image.image_url ||
+                            "/placeholder.svg?height=200&width=300"
+                          }
+                          alt={image.event_name || "Gallery image"}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      {image.description && (
+                        <div className="p-3">
+                          <p className="text-sm text-gray-600 line-clamp-2">
+                            {image.description}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       )}
 
       {/* Lightbox */}
@@ -138,21 +148,26 @@ export function GalleryGrid({
           <div className="relative max-w-4xl max-h-[80vh] w-full">
             <Image
               src={selectedImage.image_url || "/placeholder.svg"}
-              alt={selectedImage.title || "Gallery image"}
+              alt={"Gallery image"}
               width={1200}
               height={800}
               className="object-contain max-h-[80vh] mx-auto"
             />
 
-            {(selectedImage.title || selectedImage.description) && (
+            {(selectedImage.event_name || selectedImage.description) && (
               <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white p-4">
-                {selectedImage.title && (
+                {selectedImage.event_name && (
                   <h3 className="text-lg font-semibold">
-                    {selectedImage.title}
+                    {selectedImage.event_name}
                   </h3>
                 )}
+                {selectedImage.event_date && (
+                  <p className="text-sm text-gray-300">
+                    {format(new Date(selectedImage.event_date), "MMMM d, yyyy")}
+                  </p>
+                )}
                 {selectedImage.description && (
-                  <p className="mt-1">{selectedImage.description}</p>
+                  <p className="mt-2">{selectedImage.description}</p>
                 )}
               </div>
             )}

@@ -504,7 +504,7 @@ export default function MembershipPage() {
       }
 
       if (authData.user) {
-        // Create user record - removed password field
+        // Create user record and auto-approve for immediate access
         const { error: userError } = await supabase.from("users").insert({
           id: authData.user.id,
           email: formData.email,
@@ -517,7 +517,7 @@ export default function MembershipPage() {
           batch: formData.batchHSC,
           location: formData.city,
           role: "member",
-          is_approved: false,
+          is_approved: true,
           nid_number: formData.nidNumber,
         });
 
@@ -569,11 +569,8 @@ export default function MembershipPage() {
       toast({
         title: "Registration Successful",
         description:
-          "Your membership application has been submitted and is pending approval.",
+          "Your account is ready. You can now log in using your credentials.",
       });
-
-      // Sign out the user since they need approval
-      await supabase.auth.signOut();
 
       // Reset form
       setFormData({
@@ -582,6 +579,7 @@ export default function MembershipPage() {
         email: "",
         mobile: "",
         altMobile: "",
+        birthday: "",
         gender: "",
         bloodGroup: "",
         fatherName: "",
@@ -608,6 +606,7 @@ export default function MembershipPage() {
         maritalStatus: "",
         spouseName: "",
         numberOfChildren: "",
+        others: "",
         password: "",
         confirmPassword: "",
         agreement: false,

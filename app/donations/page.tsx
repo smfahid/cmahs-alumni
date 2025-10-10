@@ -33,16 +33,11 @@ const initialFormData: FormData = {
   medium_tracker_code: "",
 };
 
-interface DonationMethodLine {
-  label: string;
-  value: string;
-}
-
 interface DonationMethod {
   name: string;
   type: "number" | "bank";
   number?: string;
-  lines?: DonationMethodLine[];
+  lines?: string[];
   icon?: React.ElementType;
 }
 
@@ -147,9 +142,7 @@ export default function DonationPage() {
 
     setIsLoading(true);
     try {
-      await ensureBucketExists(supabase, STORAGE_BUCKETS.DONATIONS, {
-        public: true,
-      });
+      await ensureBucketExists(STORAGE_BUCKETS.DONATIONS);
       let imageUrl: string | null = null;
 
       if (imageFile) {
@@ -263,9 +256,10 @@ export default function DonationPage() {
                       size="sm"
                       className="absolute top-0 right-0"
                       onClick={() => {
-                        const fullText = [method.name, ...method.lines].join(
-                          "\n"
-                        );
+                        const fullText = [
+                          method.name,
+                          ...(method.lines || []),
+                        ].join("\n");
                         handleCopy(fullText, `${method.name} details`);
                       }}
                     >

@@ -2,8 +2,7 @@
 
 import type React from "react";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { getBrowserClient } from "./supabase";
+import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 
 type AuthContextType = {
@@ -14,8 +13,8 @@ type AuthContextType = {
     identifier: string,
     password: string
   ) => Promise<{
-    error: any | null;
-    data: any | null;
+    error: Error | null;
+    data: User | null;
   }>;
   signOut: () => Promise<void>;
   isAdmin: boolean;
@@ -32,205 +31,140 @@ export function AuthProvider({
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const fetchSession = async () => {
+    const fetchAuthStatus = async () => {
       try {
-        const supabase = getBrowserClient();
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        setSessionState(session);
-        setUser(session?.user ?? null);
+        const response = await fetch("/api/auth/status");
+        const data = await response.json();
 
-        if (session?.user) {
-          // Check if user is admin
-          const { data } = await supabase
-            .from("users")
-            .select("role")
-            .eq("id", session.user.id)
-            .single();
-
-          setIsAdmin(data?.role === "admin");
+        if (response.ok) {
+          setSessionState(data.session);
+          setUser(data.user);
+          setIsAdmin(data.isAdmin);
+        } else {
+          console.error("Error fetching auth status:", data.error);
+          setSessionState(null);
+          setUser(null);
+          setIsAdmin(false);
         }
       } catch (error) {
-        console.error("Error fetching session:", error);
+        console.error("Error fetching auth status:", error);
+        setSessionState(null);
+        setUser(null);
+        setIsAdmin(false);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchSession();
+    fetchAuthStatus();
 
-    try {
-      const supabase = getBrowserClient();
-      const {
-        data: { subscription },
-      } = supabase.auth.onAuthStateChange(async (_event, session) => {
-        console.log("session->", session);
-        setSessionState(session);
-        setUser(session?.user ?? null);
-        console.log("user->", session?.user);
+    // Set up a simple polling mechanism to check auth status periodically
+    // This replaces the Supabase auth state change listener
+    const interval = setInterval(fetchAuthStatus, 30000); // Check every 30 seconds
 
-        if (session?.user) {
-          console.log(
-            "AuthContext: User found in session, fetching role for ID:",
-            session.user.id
-          );
-          try {
-            const { data, error } = await supabase
-              .from("users")
-              .select("role")
-              .eq("id", session.user.id)
-              .single();
-
-            if (error) {
-              console.error(
-                "AuthContext: Error fetching user role in onAuthStateChange:",
-                error
-              );
-              setIsAdmin(false);
-            } else {
-              console.log("AuthContext: Fetched role data:", data);
-              setIsAdmin(data?.role === "admin");
-            }
-          } catch (e) {
-            console.error("AuthContext: Exception fetching user role:", e);
-            setIsAdmin(false);
-          }
-        } else {
-          console.log(
-            "AuthContext: No user in session, setting isAdmin to false."
-          );
-          setIsAdmin(false);
-        }
-        setIsLoading(false);
-      });
-
-      return () => {
-        subscription.unsubscribe();
-      };
-    } catch (error) {
-      console.error("Error setting up auth subscription:", error);
-      setIsLoading(false);
-      return () => {};
-    }
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   const signIn = async (identifier: string, password: string) => {
     try {
-      const supabase = getBrowserClient();
-      let emailToAuth = identifier;
-
-      // Check if the identifier is likely a phone number (e.g., doesn't contain '@')
-      // You might want a more robust check here (e.g., regex for phone patterns)
-      if (!identifier.includes("@")) {
-        // Assume it's a phone number, try to get email from users table
-        // Make sure your 'users' table has a 'phone' column that stores the mobile numbers
-        const { data: userData, error: userError } = await supabase
-          .from("users")
-          .select("email")
-          .eq("phone", identifier) // Assuming 'phone' is the column name for mobile numbers
-          .single();
-
-        if (userError || !userData?.email) {
-          console.error(
-            "Error fetching user by phone or user not found:",
-            userError
-          );
-          return {
-            error: { message: "Invalid login credentials." },
-            data: null,
-          };
-        }
-        emailToAuth = userData.email;
-      }
-
-      const response = await supabase.auth.signInWithPassword({
-        email: emailToAuth, // Use the resolved email
-        password,
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ identifier, password }),
       });
 
-      if (response.data.user) {
-        // Check if user is admin
-        const { data } = await supabase
-          .from("users")
-          .select("role, is_approved")
-          .eq("id", response.data.user.id)
-          .single();
+      const data = await response.json();
 
-        setIsAdmin(data?.role === "admin");
+      if (response.ok) {
+        // Update local state with the response data
+        setUser(data.user);
+        setSessionState(data.session);
+        setIsAdmin(data.isAdmin);
 
-        // If user is not approved and not admin, sign them out
-        if (!data?.is_approved && data?.role !== "admin") {
-          await supabase.auth.signOut();
-          // Clear local state as well
-          setUser(null);
-          setSessionState(null);
-          setIsAdmin(false);
-          return {
-            error: { message: "Your account is pending approval." },
-            data: null,
-          };
-        }
-        // If login is successful and user is approved (or admin), update state
-        setUser(response.data.user as User);
-        setSessionState(response.data.session);
-      } else if (response.error) {
-        // Handle errors from signInWithPassword (e.g., wrong password for the resolved email)
         return {
-          error: response.error,
+          error: null,
+          data: data.user,
+        };
+      } else {
+        return {
+          error: new Error(data.error || "Login failed"),
           data: null,
         };
       }
-
-      return response;
     } catch (error: any) {
       console.error("Error signing in:", error);
       return {
-        error: { message: error.message || "An unexpected error occurred." },
+        error: new Error(error.message || "An unexpected error occurred."),
         data: null,
       };
     }
   };
 
   const signOut = async () => {
-    console.log("AuthContext: signOut initiated."); // Renamed for clarity
+    console.log("AuthContext: signOut initiated.");
     try {
-      const supabase = getBrowserClient();
-      console.log(
-        "AuthContext: Supabase client obtained for signOut:",
-        supabase ? "Yes" : "No"
-      );
-
-      const { error: signOutError } = await supabase.auth.signOut();
-
-      if (signOutError) {
-        console.error(
-          "AuthContext: Error from supabase.auth.signOut():",
-          signOutError
-        );
-      } else {
-        console.log(
-          "AuthContext: supabase.auth.signOut() successful, no error object returned."
-        );
-      }
-
+      // Optimistically clear local state
       setUser(null);
       setSessionState(null);
       setIsAdmin(false);
+
+      // Clear local storage
+      try {
+        const clearStores = (store: Storage | null) => {
+          if (!store) return;
+          const keys: string[] = [];
+          for (let i = 0; i < store.length; i++) {
+            const key = store.key(i);
+            if (key && key.startsWith("sb-")) keys.push(key);
+          }
+          keys.forEach((k) => store.removeItem(k));
+        };
+        clearStores(window.localStorage);
+        clearStores(window.sessionStorage);
+      } catch {}
+
+      // Call logout API
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        console.error("Logout API error:", data.error);
+      }
+
       console.log("AuthContext: Local state (user, session, isAdmin) cleared.");
+
+      // Hard redirect to login to ensure fresh server state
+      try {
+        window.location.assign("/login");
+      } catch {}
     } catch (error) {
       console.error("AuthContext: General error in signOut function:", error);
+      setUser(null);
+      setSessionState(null);
+      setIsAdmin(false);
+      try {
+        window.location.assign("/login");
+      } catch {}
     }
   };
 
-  const value = {
-    user,
-    session: sessionState,
-    isLoading,
-    signIn,
-    signOut,
-    isAdmin,
-  };
+  const value = useMemo(
+    () => ({
+      user,
+      session: sessionState,
+      isLoading,
+      signIn,
+      signOut,
+      isAdmin,
+    }),
+    [user, sessionState, isLoading, isAdmin]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

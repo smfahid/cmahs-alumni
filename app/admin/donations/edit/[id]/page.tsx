@@ -100,7 +100,7 @@ export default function EditDonationPage() {
   }, [fetchDonation]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, [name]: e.target.value }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

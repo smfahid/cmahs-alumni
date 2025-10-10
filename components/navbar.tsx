@@ -7,6 +7,15 @@ import { Menu, X } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -95,22 +104,44 @@ export function Navbar() {
             </div>
             <div className="ml-4">
               {user ? (
-                <div className="flex items-center space-x-2">
-                  {isAdmin && (
-                    <Link href="/admin">
-                      <Button variant="default" size="sm" className="shadow-sm">
-                        Admin Panel
-                      </Button>
-                    </Link>
-                  )}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => signOut()}
-                    className="shadow-sm"
-                  >
-                    Logout
-                  </Button>
+                <div className="flex items-center space-x-3">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="rounded-full ring-2 ring-primary/30 p-0.5">
+                        <Avatar className="h-9 w-9">
+                          <AvatarImage src="/placeholder-user.jpg" alt="User" />
+                          <AvatarFallback>U</AvatarFallback>
+                        </Avatar>
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link href="/profile">Profile</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/settings">Settings</Link>
+                      </DropdownMenuItem>
+                      {isAdmin && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem asChild>
+                            <Link
+                              href="/admin"
+                              className="text-primary font-medium"
+                            >
+                              Admin Dashboard
+                            </Link>
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => signOut()}>
+                        Logout
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               ) : (
                 <motion.div
@@ -191,16 +222,53 @@ export function Navbar() {
                   </Button>
                 </Link>
               )}
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => {
-                  signOut();
-                  closeMenu();
-                }}
-              >
-                Logout
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="w-full justify-start">
+                    <Avatar className="h-5 w-5 mr-2">
+                      <AvatarImage src="/placeholder-user.jpg" alt="User" />
+                      <AvatarFallback>U</AvatarFallback>
+                    </Avatar>
+                    Account
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" onClick={closeMenu}>
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/settings" onClick={closeMenu}>
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href="/admin"
+                          onClick={closeMenu}
+                          className="text-primary font-medium"
+                        >
+                          Admin Dashboard
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={async () => {
+                      await signOut();
+                    }}
+                  >
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           ) : (
             <div className="pt-4 px-3">

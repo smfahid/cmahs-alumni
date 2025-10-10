@@ -86,9 +86,7 @@ export default function CreateDonationPage() {
 
     setIsLoading(true);
     try {
-      await ensureBucketExists(supabase, STORAGE_BUCKETS.DONATIONS, {
-        public: true,
-      });
+      await ensureBucketExists(STORAGE_BUCKETS.DONATIONS);
       let imageUrl: string | null = null;
 
       if (imageFile) {

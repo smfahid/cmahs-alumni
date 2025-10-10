@@ -2,27 +2,55 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useToast } from "@/components/ui/use-toast";
 import { getBrowserClient } from "@/lib/supabase";
-import { ImageIcon, X } from "lucide-react";
+import { ImageIcon, X, Calendar as CalendarIcon } from "lucide-react";
 import { ensureBucketExists, STORAGE_BUCKETS } from "@/lib/storage-utils";
+import { format } from "date-fns";
 
 export default function GalleryUploadPage() {
-  const [title, setTitle] = useState("");
+  const [eventName, setEventName] = useState("");
+  const [eventDate, setEventDate] = useState<Date>();
   const [description, setDescription] = useState("");
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [isHero, setIsHero] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [heroImageCount, setHeroImageCount] = useState(0);
   const { toast } = useToast();
   const router = useRouter();
+
+  useEffect(() => {
+    // Check current hero image count
+    const checkHeroImageCount = async () => {
+      try {
+        const supabase = getBrowserClient();
+        const { count, error } = await supabase
+          .from("gallery")
+          .select("*", { count: "exact", head: true })
+          .eq("is_hero", true);
+
+        if (error) throw error;
+        setHeroImageCount(count || 0);
+      } catch (error) {
+        console.error("Error checking hero images:", error);
+      }
+    };
+
+    checkHeroImageCount();
+  }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -47,6 +75,24 @@ export default function GalleryUploadPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!eventName.trim()) {
+      toast({
+        title: "Event Name Required",
+        description: "Please enter an event name.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!eventDate) {
+      toast({
+        title: "Event Date Required",
+        description: "Please select an event date.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (images.length === 0) {
       toast({
         title: "Images Required",
@@ -55,6 +101,9 @@ export default function GalleryUploadPage() {
       });
       return;
     }
+
+    // Remove the hero image limit check during upload
+    // Images are uploaded as non-hero by default, limit only applies when setting as hero
 
     setIsLoading(true);
 
@@ -86,7 +135,8 @@ export default function GalleryUploadPage() {
           .getPublicUrl(filePath);
 
         return {
-          title,
+          event_name: eventName.trim(),
+          event_date: format(eventDate, "yyyy-MM-dd"),
           description,
           image_url: urlData.publicUrl,
           is_hero: false,
@@ -108,9 +158,9 @@ export default function GalleryUploadPage() {
 
       setImages([]);
       setImagePreviews([]);
-      setTitle("");
+      setEventName("");
+      setEventDate(undefined);
       setDescription("");
-      setIsHero(false);
 
       router.push("/admin/gallery");
     } catch (error: any) {
@@ -215,12 +265,37 @@ export default function GalleryUploadPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="title">Title for all images (Optional)</Label>
+              <Label htmlFor="event-name">Event Name *</Label>
               <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                id="event-name"
+                value={eventName}
+                onChange={(e) => setEventName(e.target.value)}
+                placeholder="e.g., Annual Sports Day 2024"
+                required
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Event Date *</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-left font-normal"
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {eventDate ? format(eventDate, "PPP") : "Select a date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={eventDate}
+                    onSelect={setEventDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
 
             <div className="space-y-2">
@@ -232,8 +307,20 @@ export default function GalleryUploadPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
+                placeholder="Add a description for these event images..."
               />
             </div>
+
+            {heroImageCount >= 4 && (
+              <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+                <p className="text-sm text-blue-800">
+                  <strong>Info:</strong> You currently have {heroImageCount}{" "}
+                  hero images. You can upload new images normally, but you'll
+                  need to remove an existing hero image before marking new ones
+                  as hero (maximum 4 allowed).
+                </p>
+              </div>
+            )}
 
             <Button type="submit" disabled={isLoading || images.length === 0}>
               {isLoading

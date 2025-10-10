@@ -57,7 +57,7 @@ export default function LoginPage() {
     }
   };
 
-  if (authIsLoading || user) {
+  if (user) {
     return (
       <MainLayout>
         <div className="min-h-[calc(100vh-64px)] flex items-center justify-center">

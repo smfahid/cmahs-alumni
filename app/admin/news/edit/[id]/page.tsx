@@ -120,9 +120,7 @@ export default function EditNewsPage() {
     setIsLoading(true);
 
     try {
-      await ensureBucketExists(supabase, STORAGE_BUCKETS.NEWS, {
-        public: true,
-      });
+      await ensureBucketExists(STORAGE_BUCKETS.NEWS);
       let finalImageUrl: string | null = existingImageUrl;
 
       // 1. Handle new image upload

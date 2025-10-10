@@ -1,70 +1,74 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useToast } from "@/components/ui/use-toast"
-import { getSupabase } from "@/lib/supabase"
-import { ImageIcon } from "lucide-react"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
+import { getBrowserClient } from "@/lib/supabase";
+import { ImageIcon } from "lucide-react";
 
 export default function CreateEventPage() {
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [eventDate, setEventDate] = useState("")
-  const [location, setLocation] = useState("")
-  const [image, setImage] = useState<File | null>(null)
-  const [imagePreview, setImagePreview] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const { toast } = useToast()
-  const router = useRouter()
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [eventDate, setEventDate] = useState("");
+  const [location, setLocation] = useState("");
+  const [image, setImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+  const router = useRouter();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0]
-      setImage(file)
-      setImagePreview(URL.createObjectURL(file))
+      const file = e.target.files[0];
+      setImage(file);
+      setImagePreview(URL.createObjectURL(file));
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!title || !description || !eventDate) {
       toast({
         title: "Missing Fields",
         description: "Please fill in all required fields.",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      const supabase = getSupabase()
+      const supabase = getBrowserClient();
 
-      let imageUrl = ""
+      let imageUrl = "";
 
       // Upload image if provided
       if (image) {
-        const fileExt = image.name.split(".").pop()
-        const fileName = `${Date.now()}.${fileExt}`
-        const filePath = `events/${fileName}`
+        const fileExt = image.name.split(".").pop();
+        const fileName = `${Date.now()}.${fileExt}`;
+        const filePath = `events/${fileName}`;
 
-        const { error: uploadError } = await supabase.storage.from("events").upload(filePath, image)
+        const { error: uploadError } = await supabase.storage
+          .from("events")
+          .upload(filePath, image);
 
-        if (uploadError) throw uploadError
+        if (uploadError) throw uploadError;
 
         // Get public URL
-        const { data: urlData } = supabase.storage.from("events").getPublicUrl(filePath)
+        const { data: urlData } = supabase.storage
+          .from("events")
+          .getPublicUrl(filePath);
 
-        imageUrl = urlData.publicUrl
+        imageUrl = urlData.publicUrl;
       }
 
       // Create event
@@ -74,31 +78,36 @@ export default function CreateEventPage() {
         event_date: new Date(eventDate).toISOString(),
         location,
         image_url: imageUrl || null,
-      })
+      });
 
-      if (insertError) throw insertError
+      if (insertError) throw insertError;
 
       toast({
         title: "Event Created",
         description: "The event has been created successfully.",
-      })
+      });
 
-      router.push("/admin/events")
+      router.push("/admin/events");
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "An error occurred while creating the event.",
+        description:
+          error.message || "An error occurred while creating the event.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div>
       <div className="flex items-center mb-8">
-        <Button variant="outline" onClick={() => router.back()} className="mr-4">
+        <Button
+          variant="outline"
+          onClick={() => router.back()}
+          className="mr-4"
+        >
           Back
         </Button>
         <h1 className="text-3xl font-bold">Create Event</h1>
@@ -112,7 +121,12 @@ export default function CreateEventPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="title">Title *</Label>
-              <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
             </div>
 
             <div className="space-y-2">
@@ -140,7 +154,11 @@ export default function CreateEventPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="location">Location</Label>
-                <Input id="location" value={location} onChange={(e) => setLocation(e.target.value)} />
+                <Input
+                  id="location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
               </div>
             </div>
 
@@ -160,8 +178,8 @@ export default function CreateEventPage() {
                       size="sm"
                       className="absolute top-2 right-2"
                       onClick={() => {
-                        setImage(null)
-                        setImagePreview(null)
+                        setImage(null);
+                        setImagePreview(null);
                       }}
                     >
                       Change
@@ -185,7 +203,9 @@ export default function CreateEventPage() {
                         className="hidden"
                       />
                     </div>
-                    <p className="mt-2 text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                    <p className="mt-2 text-xs text-gray-500">
+                      PNG, JPG, GIF up to 10MB
+                    </p>
                   </div>
                 )}
               </div>
@@ -198,5 +218,5 @@ export default function CreateEventPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
