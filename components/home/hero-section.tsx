@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface HeroImage {
   id: string;
@@ -49,87 +49,151 @@ export function HeroSection({ images }: { images: HeroImage[] }) {
   }, [goToNext]);
 
   return (
-    <div className="relative h-screen max-h-[800px] overflow-hidden">
-      {heroImages.map((image, index) => (
-        <div
-          key={image.id}
-          className={`absolute inset-0 transition-opacity duration-1000 ${
-            index === currentIndex ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <div className="relative w-full h-full">
-            <Image
-              src={image.image_url || "/placeholder.svg"}
-              alt={image.title || "Hero image"}
-              fill
-              priority
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"></div>
+    <div className="relative h-screen min-h-[600px] md:min-h-[700px] max-h-[900px] overflow-hidden bg-black">
+      <AnimatePresence initial={false}>
+        {heroImages.map(
+          (image, index) =>
+            index === currentIndex && (
+              <motion.div
+                key={image.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{
+                  duration: 0.7,
+                  ease: "easeInOut",
+                }}
+                className="absolute inset-0"
+              >
+                <div className="relative w-full h-full">
+                  <Image
+                    src={image.image_url || "/placeholder.svg"}
+                    alt={image.title || "Hero image"}
+                    fill
+                    priority={index === 0}
+                    className="object-cover"
+                    quality={90}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60"></div>
 
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4">
-              <div className="container-custom max-w-5xl">
-                <motion.div
-                  key={`title-${currentIndex}`}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                  className="text-center"
-                >
-                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-                    {image.title || "CMAHS Alumni Association"}
-                  </h1>
-                  <p className="text-xl md:text-2xl text-center max-w-3xl mx-auto mb-8 text-gray-200">
-                    {image.description ||
-                      "Connecting generations of alumni for a stronger community"}
-                  </p>
-                  <div className="flex md:hidden justify-center space-x-4 mt-6">
-                    <Link href="/login" passHref legacyBehavior>
-                      <Button
-                        variant="outline"
-                        className="bg-transparent hover:bg-white/10 text-white border-white"
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-white px-4 sm:px-6">
+                    <div className="container-custom max-w-6xl">
+                      <motion.div
+                        initial={{ opacity: 0, y: 40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          duration: 0.8,
+                          delay: 0.2,
+                          ease: [0.16, 1, 0.3, 1],
+                        }}
+                        className="text-center"
                       >
-                        Membership Login
-                      </Button>
-                    </Link>
+                        <motion.h1
+                          className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-semibold mb-6 md:mb-8 leading-[1.1] tracking-tight"
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{
+                            duration: 0.8,
+                            delay: 0.3,
+                            ease: [0.16, 1, 0.3, 1],
+                          }}
+                        >
+                          {image.title || "CMAHS Alumni"}
+                        </motion.h1>
+                        <motion.p
+                          className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-center max-w-4xl mx-auto mb-10 md:mb-12 text-white/90 font-light leading-relaxed"
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{
+                            duration: 0.8,
+                            delay: 0.4,
+                            ease: [0.16, 1, 0.3, 1],
+                          }}
+                        >
+                          {image.description ||
+                            "Connecting generations of alumni for a stronger community"}
+                        </motion.p>
+                        <motion.div
+                          className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+                          initial={{ opacity: 0, y: 30 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{
+                            duration: 0.8,
+                            delay: 0.5,
+                            ease: [0.16, 1, 0.3, 1],
+                          }}
+                        >
+                          <Link href="/membership">
+                            <Button
+                              size="lg"
+                              className="bg-white text-primary hover:bg-white/90 rounded-xl px-8 h-12 md:h-14 text-[15px] md:text-base font-medium shadow-xl active:scale-95 transition-all duration-200"
+                            >
+                              Join Now
+                              <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
+                            </Button>
+                          </Link>
+                          <Link href="/about">
+                            <Button
+                              size="lg"
+                              variant="outline"
+                              className="bg-transparent hover:bg-white/10 text-white border-2 border-white/50 hover:border-white rounded-xl px-8 h-12 md:h-14 text-[15px] md:text-base font-medium backdrop-blur-sm active:scale-95 transition-all duration-200"
+                            >
+                              Learn More
+                            </Button>
+                          </Link>
+                        </motion.div>
+                      </motion.div>
+                    </div>
                   </div>
-                </motion.div>
-              </div>
-            </div>
+                </div>
+              </motion.div>
+            )
+        )}
+      </AnimatePresence>
+
+      {heroImages.length > 1 && (
+        <>
+          <motion.button
+            onClick={goToPrevious}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className="absolute left-4 md:left-8 top-1/2 transform -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-3 md:p-4 rounded-full transition-all duration-200 backdrop-blur-md border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
+          </motion.button>
+          <motion.button
+            onClick={goToNext}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className="absolute right-4 md:right-8 top-1/2 transform -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-3 md:p-4 rounded-full transition-all duration-200 backdrop-blur-md border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
+            aria-label="Next slide"
+          >
+            <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
+          </motion.button>
+
+          <div className="absolute bottom-8 md:bottom-12 left-0 right-0 flex justify-center gap-2 md:gap-3">
+            {heroImages.map((_, index) => (
+              <motion.button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                whileHover={{ scale: 1.2 }}
+                whileTap={{ scale: 0.9 }}
+                className="relative focus:outline-none group"
+                aria-label={`Go to slide ${index + 1}`}
+              >
+                <span
+                  className={`block rounded-full transition-all duration-300 ${
+                    index === currentIndex
+                      ? "bg-white w-8 md:w-10 h-2"
+                      : "bg-white/40 hover:bg-white/60 w-2 h-2"
+                  }`}
+                />
+              </motion.button>
+            ))}
           </div>
-        </div>
-      ))}
-
-      <button
-        onClick={goToPrevious}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-3 rounded-full transition-all duration-300 backdrop-blur-sm"
-        aria-label="Previous slide"
-      >
-        <ChevronLeft className="h-6 w-6" />
-      </button>
-      <button
-        onClick={goToNext}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-3 rounded-full transition-all duration-300 backdrop-blur-sm"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="h-6 w-6" />
-      </button>
-
-      <div className="absolute bottom-8 left-0 right-0 flex justify-center space-x-3">
-        {heroImages.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentIndex(index)}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              index === currentIndex
-                ? "bg-white w-8"
-                : "bg-white/50 hover:bg-white/80"
-            }`}
-            aria-label={`Go to slide ${index + 1}`}
-          ></button>
-        ))}
-      </div>
+        </>
+      )}
     </div>
   );
 }

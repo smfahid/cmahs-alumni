@@ -69,82 +69,109 @@ export default function LoginPage() {
 
   return (
     <MainLayout>
-      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-lg shadow-md">
-          <div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              Member Login
+      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center bg-gradient-to-b from-white to-primary-50/30 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <div className="text-center">
+            <h2 className="text-4xl sm:text-5xl font-semibold tracking-tight text-foreground">
+              Welcome back
             </h2>
-            <p className="mt-2 text-center text-sm text-gray-600">
-              Or{" "}
-              <Link
-                href="/membership"
-                className="font-medium text-primary hover:text-primary/80"
-              >
-                register for membership
-              </Link>
+            <p className="mt-3 text-base sm:text-lg text-muted-foreground">
+              Sign in to your account to continue
             </p>
           </div>
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="identifier">Email or Mobile Number</Label>
-                <Input
-                  id="identifier"
-                  name="identifier"
-                  type="text"
-                  autoComplete="username"
-                  required
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    autoComplete="current-password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="mt-1 pr-10"
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => setShowPassword(!showPassword)}
+
+          <div className="bg-white rounded-2xl shadow-card p-8 sm:p-10 space-y-6 border border-border/50">
+            <form className="space-y-5" onSubmit={handleSubmit}>
+              <div className="space-y-4">
+                <div>
+                  <Label
+                    htmlFor="identifier"
+                    className="text-[15px] font-medium"
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400" />
-                    )}
-                  </button>
+                    Email or Mobile Number
+                  </Label>
+                  <Input
+                    id="identifier"
+                    name="identifier"
+                    type="text"
+                    autoComplete="username"
+                    required
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
+                    className="mt-2 h-12 rounded-xl border-2 text-[15px] focus:border-primary transition-colors"
+                    placeholder="Enter your email or mobile"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="password" className="text-[15px] font-medium">
+                    Password
+                  </Label>
+                  <div className="relative mt-2">
+                    <Input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      autoComplete="current-password"
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="h-12 rounded-xl border-2 pr-12 text-[15px] focus:border-primary transition-colors"
+                      placeholder="Enter your password"
+                    />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-muted-foreground hover:text-foreground transition-colors"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="flex items-center justify-between">
-              <div className="text-sm">
+              <div className="flex items-center justify-end">
                 <Link
                   href="/forgot-password"
-                  className="font-medium text-primary hover:text-primary/80"
+                  className="text-[15px] font-medium text-primary hover:text-primary-600 transition-colors"
                 >
-                  Forgot your password?
+                  Forgot password?
                 </Link>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full h-12 rounded-xl text-[15px] font-medium shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+                disabled={formIsLoading}
+              >
+                {formIsLoading ? "Signing in..." : "Sign In"}
+              </Button>
+            </form>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-border" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="bg-white px-4 text-muted-foreground">
+                  New to CMAHS Alumni?
+                </span>
               </div>
             </div>
 
-            <div>
-              <Button type="submit" className="w-full" disabled={formIsLoading}>
-                {formIsLoading ? "Signing in..." : "Sign in"}
+            <Link href="/membership" className="block">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-12 rounded-xl text-[15px] font-medium border-2 hover:bg-primary-50/50 hover:border-primary/30 transition-all active:scale-[0.98]"
+              >
+                Create an account
               </Button>
-            </div>
-          </form>
+            </Link>
+          </div>
         </div>
       </div>
     </MainLayout>

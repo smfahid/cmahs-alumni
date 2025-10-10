@@ -66,6 +66,9 @@ const config: Config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xl: "1rem",
+        "2xl": "1.25rem",
+        "3xl": "1.5rem",
       },
       keyframes: {
         "accordion-down": {
@@ -107,8 +110,13 @@ const config: Config = {
         "pulse-slow": "pulse-slow 3s infinite",
       },
       boxShadow: {
-        soft: "0 4px 20px rgba(0, 0, 0, 0.08)",
-        hover: "0 10px 25px rgba(0, 0, 0, 0.12)",
+        soft: "0 2px 16px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04)",
+        hover: "0 8px 32px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04)",
+        card: "0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03)",
+        "card-hover":
+          "0 4px 16px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.04)",
+        xl: "0 20px 40px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.04)",
+        "2xl": "0 25px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05)",
       },
       typography: {
         DEFAULT: {
@@ -126,18 +134,34 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
-          '"Noto Sans Bengali"',
           "-apple-system",
           "BlinkMacSystemFont",
+          '"SF Pro Display"',
           '"Segoe UI"',
           "Roboto",
+          '"Helvetica Neue"',
+          "Arial",
+          "sans-serif",
+          '"Noto Sans Bengali"',
+          '"Apple Color Emoji"',
+          '"Segoe UI Emoji"',
         ],
         bengali: [
           '"Noto Sans Bengali"',
           "-apple-system",
           "BlinkMacSystemFont",
+          '"SF Pro Display"',
           '"Segoe UI"',
           "Roboto",
+        ],
+        display: [
+          "-apple-system",
+          "BlinkMacSystemFont",
+          '"SF Pro Display"',
+          '"Segoe UI"',
+          '"Helvetica Neue"',
+          "Arial",
+          "sans-serif",
         ],
       },
     },

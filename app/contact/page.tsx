@@ -844,27 +844,41 @@ export default async function ContactPage() {
   const ecMembers = staticEcMembers;
   return (
     <MainLayout>
-      <div className="bg-gray-50 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div>
-            <div className="mb-12">
-              <h2 className="text-3xl font-bold text-center mb-8">
-                Contact Our Organizers
+      <div className="bg-gradient-to-b from-white via-primary-50/20 to-white min-h-screen">
+        {/* Header Section */}
+        <div className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-3xl mx-auto">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-foreground mb-4">
+                Get in Touch
+              </h1>
+              <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
+                Connect with our team and community leaders
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="pb-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mb-16">
+              <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-center mb-12">
+                Our Organizers
               </h2>
               <ContactCards boardMembers={boardMembers} ecMembers={ecMembers} />
             </div>
 
             <div>
-              <h2 className="text-2xl font-semibold mb-6">
+              <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight mb-8">
                 Contact Information
               </h2>
-              <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                <div className="space-y-4">
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 bg-primary rounded-full p-2 mr-3">
+              <div className="bg-white rounded-2xl shadow-card p-8 sm:p-10 mb-8 border border-border/50">
+                <div className="space-y-6">
+                  <div className="flex items-start group">
+                    <div className="flex-shrink-0 bg-primary/10 rounded-xl p-4 mr-4 group-hover:bg-primary/20 transition-colors">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-white"
+                        className="h-6 w-6 text-primary"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -884,19 +898,22 @@ export default async function ContactPage() {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-medium">Address</h3>
-                      <p className="text-gray-600">
+                      <h3 className="text-lg font-semibold text-foreground mb-1">
+                        Address
+                      </h3>
+                      <p className="text-muted-foreground text-[15px] leading-relaxed">
                         Char Mehar Azizia High School Alumni Association,
+                        <br />
                         Ramdoyal Bazar, Ramgati, Laxmipur - 3730.
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 bg-primary rounded-full p-2 mr-3">
+                  <div className="flex items-start group">
+                    <div className="flex-shrink-0 bg-primary/10 rounded-xl p-4 mr-4 group-hover:bg-primary/20 transition-colors">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-white"
+                        className="h-6 w-6 text-primary"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -910,16 +927,23 @@ export default async function ContactPage() {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-medium">Phone</h3>
-                      <p className="text-gray-600">+880 1764-440404</p>
+                      <h3 className="text-lg font-semibold text-foreground mb-1">
+                        Phone
+                      </h3>
+                      <a
+                        href="tel:+8801764440404"
+                        className="text-primary text-[15px] hover:text-primary-600 transition-colors"
+                      >
+                        +880 1764-440404
+                      </a>
                     </div>
                   </div>
 
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 bg-primary rounded-full p-2 mr-3">
+                  <div className="flex items-start group">
+                    <div className="flex-shrink-0 bg-primary/10 rounded-xl p-4 mr-4 group-hover:bg-primary/20 transition-colors">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 text-white"
+                        className="h-6 w-6 text-primary"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -933,23 +957,31 @@ export default async function ContactPage() {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-lg font-medium">Email</h3>
-                      <p className="text-gray-600">alumni.cmahs@gmail.com</p>
+                      <h3 className="text-lg font-semibold text-foreground mb-1">
+                        Email
+                      </h3>
+                      <a
+                        href="mailto:alumni.cmahs@gmail.com"
+                        className="text-primary text-[15px] hover:text-primary-600 transition-colors"
+                      >
+                        alumni.cmahs@gmail.com
+                      </a>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div className="bg-white rounded-2xl shadow-card overflow-hidden border border-border/50">
                 <iframe
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3682.1961205074754!2d90.95194717546266!3d22.646475279439144!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3754b5158cb08e2d%3A0x9ec9602841b5758a!2sChar%20Mehar%20Azizia%20High%20School!5e0!3m2!1sen!2sbd!4v1748237470538!5m2!1sen!2sbd"
                   width="100%"
-                  height="300"
+                  height="400"
                   style={{ border: 0 }}
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                   title="CMAHS Location"
+                  className="grayscale hover:grayscale-0 transition-all duration-300"
                 ></iframe>
               </div>
             </div>

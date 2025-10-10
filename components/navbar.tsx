@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,7 +25,7 @@ export function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
+      if (window.scrollY > 20) {
         setScrolled(true);
       } else {
         setScrolled(false);
@@ -35,6 +35,20 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -60,41 +74,54 @@ export function Navbar() {
     ? baseNavLinks.filter((link) => link.name !== "Membership")
     : baseNavLinks.filter((link) => link.name !== "Member List");
 
+  // Check if we're on homepage - only homepage should have transparent navbar at top
+  const isHomePage = pathname === "/";
+
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/90 backdrop-blur-md shadow-md py-2"
-          : "bg-transparent py-4"
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out ${
+        scrolled || !isHomePage
+          ? "bg-white/80 backdrop-blur-2xl shadow-soft py-3"
+          : "bg-transparent py-4 md:py-5"
       }`}
     >
       <div className="container-custom">
         <div className="flex justify-between items-center">
-          <Link href="/" className="flex-shrink-0 flex items-center">
+          <Link href="/" className="flex-shrink-0 flex items-center group">
             <motion.span
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-primary font-bold text-xl md:text-2xl"
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className={`font-semibold text-lg sm:text-xl md:text-2xl tracking-tight transition-colors ${
+                scrolled || !isHomePage ? "text-foreground" : "text-white"
+              } group-hover:text-primary`}
             >
-              CMAHS ALUMNI ASSOCIATION
+              CMAHS ALUMNI
             </motion.span>
           </Link>
-          <div className="hidden md:flex items-center space-x-1">
-            <div className="flex space-x-1">
+          <div className="hidden lg:flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               {navLinks.map((link, index) => (
                 <motion.div
                   key={link.name}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: index * 0.05,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
                 >
                   <Link
                     href={link.href}
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    className={`relative px-3 py-2 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                       pathname === link.href
-                        ? "text-primary bg-primary-50 font-semibold"
-                        : "text-gray-700 hover:text-primary hover:bg-primary-50/50"
+                        ? scrolled || !isHomePage
+                          ? "text-primary bg-primary-50/80"
+                          : "text-white bg-white/20"
+                        : scrolled || !isHomePage
+                        ? "text-foreground/80 hover:text-primary hover:bg-primary-50/50"
+                        : "text-white/90 hover:text-white hover:bg-white/10"
                     }`}
                   >
                     {link.name}
@@ -107,21 +134,38 @@ export function Navbar() {
                 <div className="flex items-center space-x-3">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="rounded-full ring-2 ring-primary/30 p-0.5">
+                      <button className="rounded-full ring-2 ring-primary/20 hover:ring-primary/40 transition-all duration-200 p-0.5 focus:outline-none focus:ring-2 focus:ring-primary">
                         <Avatar className="h-9 w-9">
                           <AvatarImage src="/placeholder-user.jpg" alt="User" />
-                          <AvatarFallback>U</AvatarFallback>
+                          <AvatarFallback className="bg-primary text-white text-sm font-medium">
+                            U
+                          </AvatarFallback>
                         </Avatar>
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuContent
+                      align="end"
+                      className="w-56 rounded-xl shadow-xl border-border/50"
+                    >
+                      <DropdownMenuLabel className="text-[15px]">
+                        My Account
+                      </DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
-                        <Link href="/profile">Profile</Link>
+                        <Link
+                          href="/profile"
+                          className="text-[15px] cursor-pointer"
+                        >
+                          Profile
+                        </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href="/settings">Settings</Link>
+                        <Link
+                          href="/settings"
+                          className="text-[15px] cursor-pointer"
+                        >
+                          Settings
+                        </Link>
                       </DropdownMenuItem>
                       {isAdmin && (
                         <>
@@ -129,7 +173,7 @@ export function Navbar() {
                           <DropdownMenuItem asChild>
                             <Link
                               href="/admin"
-                              className="text-primary font-medium"
+                              className="text-primary font-medium text-[15px] cursor-pointer"
                             >
                               Admin Dashboard
                             </Link>
@@ -137,7 +181,10 @@ export function Navbar() {
                         </>
                       )}
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => signOut()}>
+                      <DropdownMenuItem
+                        onClick={() => signOut()}
+                        className="text-destructive text-[15px] cursor-pointer"
+                      >
                         Logout
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -145,23 +192,39 @@ export function Navbar() {
                 </div>
               ) : (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3, delay: 0.6 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: 0.5,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
                 >
                   <Link href="/login">
-                    <Button variant="default" size="sm" className="shadow-sm">
-                      Member Login
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className={`rounded-xl shadow-sm text-[15px] h-9 px-5 transition-all duration-200 ${
+                        scrolled || !isHomePage
+                          ? "bg-primary hover:bg-primary-600"
+                          : "bg-white text-primary hover:bg-white/90"
+                      }`}
+                    >
+                      Sign In
                     </Button>
                   </Link>
                 </motion.div>
               )}
             </div>
           </div>
-          <div className="flex md:hidden items-center">
+          <div className="flex lg:hidden items-center">
             <button
               onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-primary focus:outline-none"
+              className={`inline-flex items-center justify-center p-2.5 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary ${
+                scrolled || !isHomePage
+                  ? "text-foreground hover:bg-primary-50"
+                  : "text-white hover:bg-white/10"
+              }`}
               aria-expanded={isOpen}
             >
               <span className="sr-only">Open main menu</span>
@@ -176,111 +239,166 @@ export function Navbar() {
       </div>
 
       {/* Mobile menu */}
-      <div
-        className={`md:hidden fixed inset-0 z-50 bg-white ${
-          isOpen && scrolled ? "bg-white/90 backdrop-blur-md" : "bg-white"
-        } transform transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <div className="flex justify-end p-4">
-          <button
-            onClick={closeMenu}
-            className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-primary focus:outline-none"
-          >
-            <span className="sr-only">Close menu</span>
-            <X className="h-6 w-6" />
-          </button>
-        </div>
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white">
-          {navLinks.map((link, index) => (
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop overlay */}
             <motion.div
-              key={link.name}
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+              onClick={closeMenu}
+            />
+
+            {/* Menu panel */}
+            <motion.div
+              initial={{ opacity: 0, x: "100%" }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
+              exit={{ opacity: 0, x: "100%" }}
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 30,
+                opacity: { duration: 0.2 },
+              }}
+              className="lg:hidden fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-gradient-to-b from-white to-primary-50/30 shadow-2xl"
             >
-              <Link
-                href={link.href}
-                className={`block px-3 py-4 rounded-md text-base font-medium ${
-                  pathname === link.href
-                    ? "text-primary bg-primary-50 font-semibold"
-                    : "text-gray-700 hover:text-primary hover:bg-primary-50/50"
-                }`}
-                onClick={closeMenu}
-              >
-                {link.name}
-              </Link>
-            </motion.div>
-          ))}
-          {user ? (
-            <div className="space-y-2 pt-4 px-3">
-              {isAdmin && (
-                <Link href="/admin" onClick={closeMenu}>
-                  <Button variant="default" className="w-full">
-                    Admin Panel
-                  </Button>
-                </Link>
-              )}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Avatar className="h-5 w-5 mr-2">
-                      <AvatarImage src="/placeholder-user.jpg" alt="User" />
-                      <AvatarFallback>U</AvatarFallback>
-                    </Avatar>
-                    Account
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/profile" onClick={closeMenu}>
-                      Profile
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/settings" onClick={closeMenu}>
-                      Settings
-                    </Link>
-                  </DropdownMenuItem>
-                  {isAdmin && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href="/admin"
-                          onClick={closeMenu}
-                          className="text-primary font-medium"
-                        >
-                          Admin Dashboard
-                        </Link>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={async () => {
-                      await signOut();
+              {/* Header with close button */}
+              <div className="flex justify-between items-center p-4 border-b border-border/50 bg-white/80 backdrop-blur-xl">
+                <span className="font-semibold text-lg tracking-tight text-foreground">
+                  Menu
+                </span>
+                <button
+                  onClick={closeMenu}
+                  className="inline-flex items-center justify-center p-2 rounded-lg text-foreground hover:bg-primary-50 active:scale-95 transition-all duration-200 focus:outline-none"
+                >
+                  <span className="sr-only">Close menu</span>
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Menu content */}
+              <div className="bg-slate-100 px-4 pt-4 pb-6 space-y-1.5 overflow-y-auto max-h-[calc(100vh-80px)]">
+                {navLinks.map((link, index) => (
+                  <motion.div
+                    key={link.name}
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      duration: 0.3,
+                      delay: index * 0.05,
+                      ease: [0.16, 1, 0.3, 1],
                     }}
                   >
-                    Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          ) : (
-            <div className="pt-4 px-3">
-              <Link href="/login" onClick={closeMenu}>
-                <Button variant="default" className="w-full">
-                  Member Login
-                </Button>
-              </Link>
-            </div>
-          )}
-        </div>
-      </div>
+                    <Link
+                      href={link.href}
+                      className={`block px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 ${
+                        pathname === link.href
+                          ? "text-white bg-primary shadow-sm"
+                          : "text-foreground bg-white hover:text-primary hover:bg-primary-50 active:scale-[0.98] shadow-sm border border-border/50"
+                      }`}
+                      onClick={closeMenu}
+                    >
+                      {link.name}
+                    </Link>
+                  </motion.div>
+                ))}
+                {user ? (
+                  <>
+                    {isAdmin && (
+                      <motion.div
+                        initial={{ opacity: 0, x: 30 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{
+                          duration: 0.3,
+                          delay: navLinks.length * 0.05 + 0.1,
+                          ease: [0.16, 1, 0.3, 1],
+                        }}
+                      >
+                        <Link href="/admin" onClick={closeMenu}>
+                          <div className="px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 text-white bg-primary shadow-sm">
+                            Admin Dashboard
+                          </div>
+                        </Link>
+                      </motion.div>
+                    )}
+                    <motion.div
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        duration: 0.3,
+                        delay:
+                          (navLinks.length + (isAdmin ? 1 : 0)) * 0.05 + 0.1,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                    >
+                      <Link href="/profile" onClick={closeMenu}>
+                        <div className="block px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 text-foreground bg-white hover:text-primary hover:bg-primary-50 active:scale-[0.98] shadow-sm border border-border/50">
+                          <div className="flex items-center">My Profile</div>
+                        </div>
+                      </Link>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        duration: 0.3,
+                        delay:
+                          (navLinks.length + (isAdmin ? 2 : 1)) * 0.05 + 0.1,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                    >
+                      <Link href="/settings" onClick={closeMenu}>
+                        <div className="block px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 text-foreground bg-white hover:text-primary hover:bg-primary-50 active:scale-[0.98] shadow-sm border border-border/50">
+                          Settings
+                        </div>
+                      </Link>
+                    </motion.div>
+                    <motion.div
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{
+                        duration: 0.3,
+                        delay:
+                          (navLinks.length + (isAdmin ? 3 : 2)) * 0.05 + 0.1,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                    >
+                      <div
+                        className="block px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 text-destructive hover:bg-destructive/10 hover:text-destructive bg-white active:scale-[0.98] shadow-sm border border-border/50 cursor-pointer"
+                        onClick={async () => {
+                          await signOut();
+                          closeMenu();
+                        }}
+                      >
+                        Logout
+                      </div>
+                    </motion.div>
+                  </>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      duration: 0.3,
+                      delay: navLinks.length * 0.05 + 0.1,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                  >
+                    <Link href="/login" onClick={closeMenu}>
+                      <div className="block px-4 py-3 rounded-lg text-[15px] font-medium transition-all duration-200 text-white bg-primary shadow-sm">
+                        Sign In
+                      </div>
+                    </Link>
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

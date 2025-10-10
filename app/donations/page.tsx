@@ -204,57 +204,65 @@ export default function DonationPage() {
 
   return (
     <MainLayout>
-      <div className="container mx-auto py-8 px-4 md:px-0">
-        <header className="mb-12 text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-            Support Our Cause
-          </h1>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
-            Your generous contributions empower us to continue our mission and
-            make a difference. Below are the ways you can donate. After
-            donating, please provide proof so we can acknowledge your support.
-          </p>
-        </header>
+      <div className="bg-gradient-to-b from-white via-primary-50/20 to-white min-h-screen">
+        {/* Header Section */}
+        <div className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-foreground mb-6">
+                Support Our Mission
+              </h1>
+              <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                Your generous contributions empower us to continue our mission and
+                make a lasting difference in our community.
+              </p>
+            </div>
+          </div>
+        </div>
 
-        <Card className="mb-12 shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-2xl flex items-center text-primary">
-              <Gift className="h-7 w-7 mr-3" />
-              How to Donate
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {donationMethods.map((method) => (
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+          <Card className="mb-12 shadow-card border-border/50 rounded-2xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-br from-primary-50/50 to-white p-8 sm:p-10">
+              <CardTitle className="text-2xl sm:text-3xl flex items-center text-foreground font-semibold tracking-tight">
+                <Gift className="h-7 w-7 sm:h-8 sm:w-8 mr-3 text-primary" />
+                Donation Methods
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 p-8 sm:p-10">
+            {donationMethods.map((method, index) => (
               <div
                 key={method.name}
-                className="p-4 border rounded-lg bg-slate-50 hover:shadow-md transition-shadow"
+                className="p-6 border-2 border-border/50 rounded-2xl bg-white hover:shadow-card hover:border-primary/30 transition-all duration-200 group"
               >
-                <h3 className="text-xl font-semibold mb-3 text-gray-800">
+                <h3 className="text-xl font-semibold mb-4 text-foreground tracking-tight">
                   {method.name}
                 </h3>
                 {method.type === "number" && method.number && (
-                  <div className="flex items-center justify-between">
-                    <p className="text-lg text-gray-700 font-mono">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <p className="text-lg text-foreground font-mono bg-muted px-4 py-3 rounded-xl">
                       {method.number}
                     </p>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleCopy(method.number!, method.name)}
+                      className="rounded-xl border-2 h-10 px-4 text-[15px] hover:bg-primary-50 hover:border-primary/30 active:scale-95"
                     >
                       <Copy className="h-4 w-4 mr-2" /> Copy Number
                     </Button>
                   </div>
                 )}
                 {method.type === "bank" && method.lines && (
-                  <div className="relative text-gray-700 text-sm space-y-1 font-mono">
-                    {method.lines.map((line, idx) => (
-                      <p key={idx}>{line}</p>
-                    ))}
+                  <div className="relative bg-muted/50 p-5 rounded-xl">
+                    <div className="text-foreground/80 text-sm space-y-1.5 font-mono">
+                      {method.lines.map((line, idx) => (
+                        <p key={idx} className="leading-relaxed">{line}</p>
+                      ))}
+                    </div>
                     <Button
                       variant="outline"
                       size="sm"
-                      className="absolute top-0 right-0"
+                      className="mt-4 rounded-xl border-2 h-10 px-4 text-[15px] hover:bg-primary-50 hover:border-primary/30 active:scale-95"
                       onClick={() => {
                         const fullText = [
                           method.name,
@@ -263,7 +271,7 @@ export default function DonationPage() {
                         handleCopy(fullText, `${method.name} details`);
                       }}
                     >
-                      <Copy className="h-3 w-3 " /> Copy Info
+                      <Copy className="h-4 w-4 mr-2" /> Copy Details
                     </Button>
                   </div>
                 )}
@@ -277,22 +285,22 @@ export default function DonationPage() {
             <Button
               size="lg"
               onClick={() => setShowProofForm(true)}
-              className="bg-primary hover:bg-primary/90 text-white"
+              className="bg-primary hover:bg-primary-600 text-white rounded-xl h-14 px-8 text-base font-medium shadow-md hover:shadow-lg active:scale-95 transition-all"
             >
-              <UploadCloud className="h-5 w-5 mr-2" /> Provide Donation Proof
+              <UploadCloud className="h-5 w-5 mr-2" /> Submit Donation Proof
             </Button>
           )}
         </div>
 
         {showProofForm && (
-          <Card className="shadow-xl transition-all duration-500 ease-in-out transform animate-fadeIn">
-            <CardHeader className="flex flex-row items-center justify-between">
+          <Card className="shadow-card transition-all duration-500 ease-in-out transform animate-fadeIn border-border/50 rounded-2xl overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between bg-gradient-to-br from-primary-50/30 to-white p-8 sm:p-10">
               <div>
-                <CardTitle className="text-2xl">
-                  Submit Your Donation Proof
+                <CardTitle className="text-2xl sm:text-3xl font-semibold tracking-tight">
+                  Submit Donation Proof
                 </CardTitle>
-                <p className="text-sm text-gray-500 mt-1">
-                  Fill in the details of your contribution.
+                <p className="text-[15px] text-muted-foreground mt-2">
+                  Fill in the details of your contribution
                 </p>
               </div>
               <Button
@@ -300,18 +308,19 @@ export default function DonationPage() {
                 size="icon"
                 onClick={() => setShowProofForm(false)}
                 aria-label="Close form"
+                className="rounded-xl hover:bg-muted"
               >
                 <X className="h-5 w-5" />
               </Button>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-8 sm:p-10">
               <form onSubmit={handleSubmitProof} className="space-y-6">
                 {/* Image Upload Section */}
-                <div className="space-y-2">
-                  <Label htmlFor="image-upload-proof">
+                <div className="space-y-3">
+                  <Label htmlFor="image-upload-proof" className="text-[15px] font-medium">
                     Proof Image (Optional)
                   </Label>
-                  <div className="flex items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 min-h-[150px] hover:border-primary transition-colors">
+                  <div className="flex items-center justify-center border-2 border-dashed border-border rounded-2xl p-8 min-h-[180px] hover:border-primary/50 transition-colors bg-muted/20">
                     {imagePreview ? (
                       <div className="relative w-full max-w-xs mx-auto">
                         <Image
@@ -325,7 +334,7 @@ export default function DonationPage() {
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="absolute top-2 right-2 bg-white/80 hover:bg-white text-xs"
+                          className="absolute top-2 right-2 bg-white/90 hover:bg-white text-xs rounded-lg border-2 active:scale-95"
                           onClick={() => {
                             setImageFile(null);
                             setImagePreview(null);
@@ -335,7 +344,7 @@ export default function DonationPage() {
                             if (fileInput) fileInput.value = "";
                           }}
                         >
-                          Change Image
+                          Change
                         </Button>
                       </div>
                     ) : (
@@ -363,9 +372,9 @@ export default function DonationPage() {
                 </div>
 
                 {/* Form Fields Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Your Name *</Label>
+                    <Label htmlFor="name" className="text-[15px] font-medium">Your Name *</Label>
                     <Input
                       id="name"
                       name="name"
@@ -373,10 +382,11 @@ export default function DonationPage() {
                       onChange={handleChange}
                       required
                       placeholder="e.g., Jane Doe"
+                      className="h-12 rounded-xl border-2 text-[15px] focus:border-primary"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="amount">Amount Donated (BDT) *</Label>
+                    <Label htmlFor="amount" className="text-[15px] font-medium">Amount Donated (BDT) *</Label>
                     <Input
                       id="amount"
                       name="amount"
@@ -386,10 +396,11 @@ export default function DonationPage() {
                       onChange={handleChange}
                       required
                       placeholder="e.g., 1000"
+                      className="h-12 rounded-xl border-2 text-[15px] focus:border-primary"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="mobile_no">Mobile No *</Label>
+                    <Label htmlFor="mobile_no" className="text-[15px] font-medium">Mobile No *</Label>
                     <Input
                       id="mobile_no"
                       name="mobile_no"
@@ -397,10 +408,11 @@ export default function DonationPage() {
                       onChange={handleChange}
                       placeholder="e.g., 01xxxxxxxxx"
                       required
+                      className="h-12 rounded-xl border-2 text-[15px] focus:border-primary"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email (Optional)</Label>
+                    <Label htmlFor="email" className="text-[15px] font-medium">Email (Optional)</Label>
                     <Input
                       id="email"
                       name="email"
@@ -408,10 +420,11 @@ export default function DonationPage() {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="e.g., donor@example.com"
+                      className="h-12 rounded-xl border-2 text-[15px] focus:border-primary"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="batch">SSC Batch *</Label>
+                    <Label htmlFor="batch" className="text-[15px] font-medium">SSC Batch *</Label>
                     <Input
                       id="batch"
                       name="batch"
@@ -419,21 +432,23 @@ export default function DonationPage() {
                       onChange={handleChange}
                       placeholder="e.g., SSC 2005, Supporter"
                       required
+                      className="h-12 rounded-xl border-2 text-[15px] focus:border-primary"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="medium">Donation Medium (Optional)</Label>
+                    <Label htmlFor="medium" className="text-[15px] font-medium">Donation Medium (Optional)</Label>
                     <Input
                       id="medium"
                       name="medium"
                       value={formData.medium}
                       onChange={handleChange}
                       placeholder="e.g., Bkash, Bank Transfer"
+                      className="h-12 rounded-xl border-2 text-[15px] focus:border-primary"
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="medium_tracker_code">
+                  <Label htmlFor="medium_tracker_code" className="text-[15px] font-medium">
                     Transaction ID / Reference (Optional)
                   </Label>
                   <Input
@@ -442,18 +457,19 @@ export default function DonationPage() {
                     value={formData.medium_tracker_code}
                     onChange={handleChange}
                     placeholder="e.g., TrxID123ABC, Bank Ref No."
+                    className="h-12 rounded-xl border-2 text-[15px] focus:border-primary"
                   />
                 </div>
 
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full md:w-auto bg-green-600 hover:bg-green-700 text-white"
+                  className="w-full sm:w-auto bg-primary hover:bg-primary-600 text-white rounded-xl h-12 px-8 text-[15px] font-medium shadow-sm hover:shadow-md active:scale-95 transition-all"
                 >
                   {isLoading && (
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
                   )}
-                  {isLoading ? "Submitting Proof..." : "Submit Donation Proof"}
+                  {isLoading ? "Submitting..." : "Submit Donation Proof"}
                 </Button>
               </form>
             </CardContent>

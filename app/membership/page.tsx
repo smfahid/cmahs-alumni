@@ -693,55 +693,59 @@ export default function MembershipPage() {
 
   return (
     <MainLayout>
-      <div className="bg-gray-50 py-12">
+      <div className="bg-gradient-to-b from-white via-primary-50/20 to-white min-h-screen py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-card overflow-hidden border border-border/50">
             <div className="p-6 sm:p-10">
-              <h1 className="text-3xl font-bold text-center mb-8">
-                Membership Registration
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-center mb-4 text-foreground">
+                Join Our Community
               </h1>
+              <p className="text-center text-muted-foreground mb-10 text-[15px] sm:text-base">
+                Complete your membership registration in a few simple steps
+              </p>
 
-              <div className="mb-8">
-                <div className="flex justify-between items-center">
+              {/* Apple-style Step Indicator */}
+              <div className="mb-10">
+                <div className="flex justify-between items-center relative">
+                  {/* Progress Line */}
+                  <div className="absolute top-4 left-0 right-0 h-0.5 bg-muted -z-10">
+                    <div
+                      className="h-full bg-primary transition-all duration-500 ease-out"
+                      style={{ width: `${((step - 1) / 3) * 100}%` }}
+                    />
+                  </div>
+
                   {[1, 2, 3, 4].map((s) => (
                     <div
                       key={s}
-                      className={`flex flex-col items-center ${
-                        s < step
-                          ? "text-primary"
-                          : s === step
-                          ? "text-primary"
-                          : "text-gray-400"
-                      }`}
+                      className="flex flex-col items-center relative"
                     >
                       <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center mb-2 ${
-                          s < step
-                            ? "bg-primary text-white"
-                            : s === step
-                            ? "bg-primary text-white"
-                            : "bg-gray-200 text-gray-600"
+                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mb-2 transition-all duration-300 ${
+                          s <= step
+                            ? "bg-primary text-white shadow-md scale-110"
+                            : "bg-muted text-muted-foreground"
                         }`}
                       >
-                        {s}
+                        <span className="font-medium">{s}</span>
                       </div>
-                      <span className="text-xs hidden sm:block">
+                      <span
+                        className={`text-xs sm:text-sm font-medium transition-colors ${
+                          s <= step
+                            ? "text-foreground"
+                            : "text-muted-foreground"
+                        }`}
+                      >
                         {s === 1
                           ? "Personal"
                           : s === 2
-                          ? "Institution"
+                          ? "Address"
                           : s === 3
                           ? "Professional"
                           : "Account"}
                       </span>
                     </div>
                   ))}
-                </div>
-                <div className="mt-2 h-1 bg-gray-200 rounded-full">
-                  <div
-                    className="h-1 bg-primary rounded-full transition-all"
-                    style={{ width: `${((step - 1) / 3) * 100}%` }}
-                  ></div>
                 </div>
               </div>
 
@@ -927,9 +931,13 @@ export default function MembershipPage() {
                       </div>
                     </div>
 
-                    <div className="flex justify-end">
-                      <Button type="button" onClick={nextStep}>
-                        Next
+                    <div className="flex justify-end pt-4">
+                      <Button
+                        type="button"
+                        onClick={nextStep}
+                        className="rounded-xl h-12 px-8 text-[15px] font-medium shadow-sm hover:shadow-md active:scale-95 transition-all"
+                      >
+                        Continue
                       </Button>
                     </div>
                   </div>
@@ -1169,16 +1177,21 @@ export default function MembershipPage() {
                       </div>
                     </div>
 
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-4 pt-4">
                       <Button
                         type="button"
                         variant="outline"
                         onClick={prevStep}
+                        className="rounded-xl h-12 px-8 text-[15px] font-medium border-2 hover:bg-muted active:scale-95 transition-all"
                       >
-                        Previous
+                        Back
                       </Button>
-                      <Button type="button" onClick={nextStep}>
-                        Next
+                      <Button
+                        type="button"
+                        onClick={nextStep}
+                        className="rounded-xl h-12 px-8 text-[15px] font-medium shadow-sm hover:shadow-md active:scale-95 transition-all"
+                      >
+                        Continue
                       </Button>
                     </div>
                   </div>
@@ -1266,16 +1279,21 @@ export default function MembershipPage() {
                       />
                     </div>
 
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-4 pt-4">
                       <Button
                         type="button"
                         variant="outline"
                         onClick={prevStep}
+                        className="rounded-xl h-12 px-8 text-[15px] font-medium border-2 hover:bg-muted active:scale-95 transition-all"
                       >
-                        Previous
+                        Back
                       </Button>
-                      <Button type="button" onClick={nextStep}>
-                        Next
+                      <Button
+                        type="button"
+                        onClick={nextStep}
+                        className="rounded-xl h-12 px-8 text-[15px] font-medium shadow-sm hover:shadow-md active:scale-95 transition-all"
+                      >
+                        Continue
                       </Button>
                     </div>
                   </div>
@@ -1360,16 +1378,23 @@ export default function MembershipPage() {
                       </Label>
                     </div>
 
-                    <div className="flex justify-between">
+                    <div className="flex justify-between gap-4 pt-4">
                       <Button
                         type="button"
                         variant="outline"
                         onClick={prevStep}
+                        className="rounded-xl h-12 px-8 text-[15px] font-medium border-2 hover:bg-muted active:scale-95 transition-all"
                       >
-                        Previous
+                        Back
                       </Button>
-                      <Button type="submit" disabled={isLoading}>
-                        {isLoading ? "Submitting..." : "Submit"}
+                      <Button
+                        type="submit"
+                        disabled={isLoading}
+                        className="rounded-xl h-12 px-8 text-[15px] font-medium shadow-sm hover:shadow-md active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {isLoading
+                          ? "Creating Account..."
+                          : "Complete Registration"}
                       </Button>
                     </div>
                   </div>

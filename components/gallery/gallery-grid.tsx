@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { X } from "lucide-react";
+import { X, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Accordion,
   AccordionContent,
@@ -76,104 +77,148 @@ export function GalleryGrid({ images }: Readonly<GalleryGridProps>) {
   return (
     <>
       {groupedGalleries.length === 0 ? (
-        <div className="text-center text-gray-500 py-12">
-          No images available in the gallery.
+        <div className="text-center text-muted-foreground py-20">
+          <p className="text-lg">No images available in the gallery.</p>
         </div>
       ) : (
-        <Accordion
-          type="multiple"
-          defaultValue={groupedGalleries.map((_, index) => `item-${index}`)}
-          className="w-full"
-        >
+        <div className="space-y-8">
           {groupedGalleries.map((group, index) => (
-            <AccordionItem key={group.date} value={`item-${index}`}>
-              <AccordionTrigger className="hover:no-underline">
-                <div className="text-left">
-                  <h2 className="text-3xl font-bold text-gray-800">
-                    {group.eventName}
-                  </h2>
-                  <p className="text-sm text-gray-600 mt-1">
-                    {format(new Date(group.date), "MMMM d, yyyy")} •{" "}
-                    {group.images.length} image
-                    {group.images.length !== 1 ? "s" : ""}
-                  </p>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pt-4">
-                  {group.images.map((image) => (
-                    <div
-                      key={image.id}
-                      className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transform transition-transform hover:scale-105"
-                      onClick={() => openLightbox(image)}
-                    >
-                      <div className="relative h-48 sm:h-56">
-                        <Image
-                          src={
-                            image.image_url ||
-                            "/placeholder.svg?height=200&width=300"
-                          }
-                          alt={image.event_name || "Gallery image"}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      {image.description && (
-                        <div className="p-3">
-                          <p className="text-sm text-gray-600 line-clamp-2">
+            <motion.div
+              key={group.date}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{
+                duration: 0.5,
+                delay: index * 0.1,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="bg-white rounded-2xl p-6 sm:p-8 shadow-card border border-border/50"
+            >
+              <div className="mb-6">
+                <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
+                  {group.eventName}
+                </h2>
+                <p className="text-[15px] text-muted-foreground mt-2">
+                  {format(new Date(group.date), "MMMM d, yyyy")} •{" "}
+                  {group.images.length}{" "}
+                  {group.images.length !== 1 ? "photos" : "photo"}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+                {group.images.map((image, imgIndex) => (
+                  <motion.div
+                    key={image.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{
+                      duration: 0.3,
+                      delay: imgIndex * 0.05,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="relative aspect-square rounded-xl overflow-hidden cursor-pointer shadow-sm hover:shadow-md transition-shadow bg-muted"
+                    onClick={() => openLightbox(image)}
+                  >
+                    <Image
+                      src={
+                        image.image_url ||
+                        "/placeholder.svg?height=400&width=400"
+                      }
+                      alt={image.event_name || "Gallery image"}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+                    />
+                    {image.description && (
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-200">
+                        <div className="absolute bottom-0 left-0 right-0 p-3">
+                          <p className="text-white text-xs sm:text-sm line-clamp-2 font-medium">
                             {image.description}
                           </p>
                         </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
           ))}
-        </Accordion>
+        </div>
       )}
 
       {/* Lightbox */}
-      {selectedImage && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4">
-          <button
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 bg-black/95 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             onClick={closeLightbox}
-            className="absolute top-4 right-4 text-white p-2 rounded-full bg-black bg-opacity-50 hover:bg-opacity-70"
-            aria-label="Close lightbox"
           >
-            <X className="h-6 w-6" />
-          </button>
+            <motion.button
+              onClick={closeLightbox}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className="absolute top-4 right-4 md:top-8 md:right-8 text-white p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition-colors z-10"
+              aria-label="Close lightbox"
+            >
+              <X className="h-5 w-5 md:h-6 md:w-6" />
+            </motion.button>
 
-          <div className="relative max-w-4xl max-h-[80vh] w-full">
-            <Image
-              src={selectedImage.image_url || "/placeholder.svg"}
-              alt={"Gallery image"}
-              width={1200}
-              height={800}
-              className="object-contain max-h-[80vh] mx-auto"
-            />
-
-            {(selectedImage.event_name || selectedImage.description) && (
-              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white p-4">
-                {selectedImage.event_name && (
-                  <h3 className="text-lg font-semibold">
-                    {selectedImage.event_name}
-                  </h3>
-                )}
-                {selectedImage.event_date && (
-                  <p className="text-sm text-gray-300">
-                    {format(new Date(selectedImage.event_date), "MMMM d, yyyy")}
-                  </p>
-                )}
-                {selectedImage.description && (
-                  <p className="mt-2">{selectedImage.description}</p>
-                )}
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="relative max-w-6xl max-h-[85vh] w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="relative w-full h-full">
+                <Image
+                  src={selectedImage.image_url || "/placeholder.svg"}
+                  alt={selectedImage.event_name || "Gallery image"}
+                  width={1600}
+                  height={1200}
+                  className="object-contain max-h-[85vh] mx-auto rounded-2xl"
+                  priority
+                />
               </div>
-            )}
-          </div>
-        </div>
-      )}
+
+              {(selectedImage.event_name || selectedImage.description) && (
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.2, duration: 0.3 }}
+                  className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent text-white p-6 rounded-b-2xl backdrop-blur-sm"
+                >
+                  {selectedImage.event_name && (
+                    <h3 className="text-xl md:text-2xl font-semibold tracking-tight">
+                      {selectedImage.event_name}
+                    </h3>
+                  )}
+                  {selectedImage.event_date && (
+                    <p className="text-sm md:text-base text-white/80 mt-1">
+                      {format(
+                        new Date(selectedImage.event_date),
+                        "MMMM d, yyyy"
+                      )}
+                    </p>
+                  )}
+                  {selectedImage.description && (
+                    <p className="mt-3 text-white/90 text-sm md:text-base leading-relaxed">
+                      {selectedImage.description}
+                    </p>
+                  )}
+                </motion.div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
