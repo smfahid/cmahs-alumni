@@ -78,8 +78,8 @@ export default function ForgotPasswordPage() {
               Forgot Password
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              Enter your email address or phone number and we'll send you an OTP
-              to reset your password.
+              Enter your email address and we'll send you an OTP to reset your
+              password.
             </p>
           </div>
 
@@ -141,22 +141,20 @@ export default function ForgotPasswordPage() {
           ) : (
             <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
               <div>
-                <Label htmlFor="identifier">
-                  Email Address or Phone Number
-                </Label>
+                <Label htmlFor="identifier">Email Address</Label>
                 <Input
                   id="identifier"
                   name="identifier"
                   type="text"
                   autoComplete="email"
                   required
-                  placeholder="email@example.com or phone number"
+                  placeholder="email@example.com"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   className="mt-1"
                 />
                 <p className="mt-2 text-xs text-gray-500">
-                  Enter the email or phone number associated with your account
+                  Enter the email associated with your account
                 </p>
               </div>
 

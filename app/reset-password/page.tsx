@@ -216,7 +216,7 @@ export default function ResetPasswordPage() {
                   )}
 
                   <div>
-                    <Label htmlFor="identifier">Email or Phone Number</Label>
+                    <Label htmlFor="identifier">Email Address</Label>
                     <Input
                       id="identifier"
                       name="identifier"
@@ -225,7 +225,7 @@ export default function ResetPasswordPage() {
                       value={identifier}
                       onChange={(e) => setIdentifier(e.target.value)}
                       className="mt-1"
-                      placeholder="email@example.com or phone"
+                      placeholder="email@example.com"
                     />
                   </div>
 
@@ -245,7 +245,7 @@ export default function ResetPasswordPage() {
                       maxLength={6}
                     />
                     <p className="text-xs text-gray-500 mt-2">
-                      Enter the 6-digit code sent to your email and phone
+                      Enter the 6-digit code sent to your email
                     </p>
                   </div>
 

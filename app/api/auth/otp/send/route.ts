@@ -246,7 +246,7 @@ export async function POST(request: NextRequest) {
 
     if (!identifier) {
       return NextResponse.json(
-        { error: "Email or phone number is required" },
+        { error: "Email address is required" },
         { status: 400 }
       );
     }
@@ -283,7 +283,7 @@ export async function POST(request: NextRequest) {
 
       if (error || !data) {
         return NextResponse.json(
-          { error: "No account found with this phone number" },
+          { error: "No account found with this email address" },
           { status: 404 }
         );
       }
