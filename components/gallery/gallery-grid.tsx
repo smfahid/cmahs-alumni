@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { X, ChevronDown } from "lucide-react";
+import {
+  X,
+  Folder,
+  Calendar,
+  Image as ImageIcon,
+  ChevronLeft,
+} from "lucide-react";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 
 interface GalleryImage {
   id: string;
@@ -36,9 +36,12 @@ function groupImagesByEventAndDate(images: GalleryImage[]): GroupedGallery[] {
   const grouped = new Map<string, GalleryImage[]>();
 
   images.forEach((image) => {
+    // Use event_name as the primary key, fallback to date-based key
+    const eventName = image.event_name || "Untitled Event";
     const date =
       image.event_date || format(new Date(image.created_at), "yyyy-MM-dd");
-    const key = date;
+    // Group by event name and date combination
+    const key = `${eventName}|${date}`;
 
     if (!grouped.has(key)) {
       grouped.set(key, []);
@@ -49,11 +52,13 @@ function groupImagesByEventAndDate(images: GalleryImage[]): GroupedGallery[] {
   // Convert to array and sort by date (newest first)
   const result: GroupedGallery[] = [];
   Array.from(grouped.entries())
-    .sort(([dateA], [dateB]) => dateB.localeCompare(dateA))
-    .forEach(([date, images]) => {
-      // Find the last event name for this date (most recent upload)
-      const eventName =
-        images.find((img) => img.event_name)?.event_name || "Untitled Event";
+    .sort(([keyA], [keyB]) => {
+      const dateA = keyA.split("|")[1];
+      const dateB = keyB.split("|")[1];
+      return dateB.localeCompare(dateA);
+    })
+    .forEach(([key, images]) => {
+      const [eventName, date] = key.split("|");
       result.push({ date, eventName, images });
     });
 
@@ -62,6 +67,9 @@ function groupImagesByEventAndDate(images: GalleryImage[]): GroupedGallery[] {
 
 export function GalleryGrid({ images }: Readonly<GalleryGridProps>) {
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
+  const [selectedFolder, setSelectedFolder] = useState<GroupedGallery | null>(
+    null
+  );
   const groupedGalleries = groupImagesByEventAndDate(images);
 
   const openLightbox = (image: GalleryImage) => {
@@ -74,6 +82,14 @@ export function GalleryGrid({ images }: Readonly<GalleryGridProps>) {
     document.body.style.overflow = "auto";
   };
 
+  const openFolder = (folder: GroupedGallery) => {
+    setSelectedFolder(folder);
+  };
+
+  const closeFolder = () => {
+    setSelectedFolder(null);
+  };
+
   return (
     <>
       {groupedGalleries.length === 0 ? (
@@ -81,71 +97,142 @@ export function GalleryGrid({ images }: Readonly<GalleryGridProps>) {
           <p className="text-lg">No images available in the gallery.</p>
         </div>
       ) : (
-        <div className="space-y-8">
-          {groupedGalleries.map((group, index) => (
-            <motion.div
-              key={group.date}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: 0.5,
-                delay: index * 0.1,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="bg-white rounded-2xl p-6 sm:p-8 shadow-card border border-border/50"
-            >
-              <div className="mb-6">
-                <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
-                  {group.eventName}
-                </h2>
-                <p className="text-[15px] text-muted-foreground mt-2">
-                  {format(new Date(group.date), "MMMM d, yyyy")} •{" "}
-                  {group.images.length}{" "}
-                  {group.images.length !== 1 ? "photos" : "photo"}
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
-                {group.images.map((image, imgIndex) => (
-                  <motion.div
-                    key={image.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{
-                      duration: 0.3,
-                      delay: imgIndex * 0.05,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="relative aspect-square rounded-xl overflow-hidden cursor-pointer shadow-sm hover:shadow-md transition-shadow bg-muted"
-                    onClick={() => openLightbox(image)}
-                  >
-                    <Image
-                      src={
-                        image.image_url ||
-                        "/placeholder.svg?height=400&width=400"
-                      }
-                      alt={image.event_name || "Gallery image"}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
-                    />
-                    {image.description && (
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-200">
-                        <div className="absolute bottom-0 left-0 right-0 p-3">
-                          <p className="text-white text-xs sm:text-sm line-clamp-2 font-medium">
-                            {image.description}
-                          </p>
+        <>
+          {/* Folder View - Show when no folder is selected */}
+          {!selectedFolder && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+              {groupedGalleries.map((group, index) => (
+                <motion.div
+                  key={`${group.eventName}-${group.date}`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.4,
+                    delay: index * 0.05,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => openFolder(group)}
+                  className="bg-white rounded-2xl p-6 shadow-card border border-border/50 cursor-pointer hover:shadow-lg transition-all duration-300"
+                >
+                  {/* Folder Icon and Thumbnail */}
+                  <div className="relative aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-primary/10 to-primary/5 mb-4">
+                    {group.images[0]?.image_url ? (
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={group.images[0].image_url}
+                          alt={group.eventName}
+                          fill
+                          className="object-cover opacity-90"
+                          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                        <div className="absolute bottom-2 right-2 bg-white/90 backdrop-blur-sm rounded-lg px-2 py-1 flex items-center space-x-1">
+                          <ImageIcon className="h-3 w-3 text-primary" />
+                          <span className="text-xs font-medium text-foreground">
+                            {group.images.length}
+                          </span>
                         </div>
                       </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <Folder className="h-16 w-16 text-primary/40" />
+                      </div>
                     )}
-                  </motion.div>
-                ))}
+                  </div>
+
+                  {/* Folder Info */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2 line-clamp-2">
+                      {group.eventName}
+                    </h3>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Calendar className="h-3.5 w-3.5 mr-1.5" />
+                      <span>{format(new Date(group.date), "MMM d, yyyy")}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {group.images.length}{" "}
+                      {group.images.length !== 1 ? "photos" : "photo"}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+
+          {/* Images View - Show when a folder is selected */}
+          {selectedFolder && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              {/* Back Button and Header */}
+              <div className="mb-8">
+                <button
+                  onClick={closeFolder}
+                  className="inline-flex items-center text-primary hover:text-primary-600 transition-colors mb-4 group"
+                >
+                  <ChevronLeft className="h-5 w-5 mr-1 group-hover:-translate-x-1 transition-transform" />
+                  <span className="font-medium">Back to Events</span>
+                </button>
+                <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-card border border-border/50">
+                  <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-foreground">
+                    {selectedFolder.eventName}
+                  </h2>
+                  <p className="text-[15px] text-muted-foreground mt-2">
+                    {format(new Date(selectedFolder.date), "MMMM d, yyyy")} •{" "}
+                    {selectedFolder.images.length}{" "}
+                    {selectedFolder.images.length !== 1 ? "photos" : "photo"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Images Grid */}
+              <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-card border border-border/50">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+                  {selectedFolder.images.map((image, imgIndex) => (
+                    <motion.div
+                      key={image.id}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{
+                        duration: 0.3,
+                        delay: imgIndex * 0.05,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="relative aspect-square rounded-xl overflow-hidden cursor-pointer shadow-sm hover:shadow-md transition-shadow bg-muted"
+                      onClick={() => openLightbox(image)}
+                    >
+                      <Image
+                        src={
+                          image.image_url ||
+                          "/placeholder.svg?height=400&width=400"
+                        }
+                        alt={image.event_name || "Gallery image"}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
+                      />
+                      {image.description && (
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-200">
+                          <div className="absolute bottom-0 left-0 right-0 p-3">
+                            <p className="text-white text-xs sm:text-sm line-clamp-2 font-medium">
+                              {image.description}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             </motion.div>
-          ))}
-        </div>
+          )}
+        </>
       )}
 
       {/* Lightbox */}

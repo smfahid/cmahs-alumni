@@ -1,6 +1,16 @@
 import { MainLayout } from "@/components/main-layout";
 import { ContactCards } from "@/components/contact/contact-cards";
 
+// Fisher-Yates shuffle algorithm
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 interface User {
   id: string;
   first_name: string;
@@ -841,7 +851,7 @@ export default async function ContactPage() {
   ];
   const staticBoardMembers: CommitteeMember[] = [];
   const boardMembers = staticBoardMembers;
-  const ecMembers = staticEcMembers;
+  const ecMembers = shuffleArray(staticEcMembers);
   return (
     <MainLayout>
       <div className="bg-gradient-to-b from-white via-primary-50/20 to-white min-h-screen">
@@ -863,7 +873,7 @@ export default async function ContactPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-16">
               <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-center mb-12">
-                Our Organizers
+                Our Organizers (Admin Panel)
               </h2>
               <ContactCards boardMembers={boardMembers} ecMembers={ecMembers} />
             </div>

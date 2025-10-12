@@ -314,6 +314,7 @@ export default function MembershipPage() {
   const [cropDialogOpen, setCropDialogOpen] = useState(false);
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
   const [croppedImageBlob, setCroppedImageBlob] = useState<Blob | null>(null);
+  const [sameAsPresent, setSameAsPresent] = useState(false);
   const { toast } = useToast();
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear - 1976 + 1 }, (_, i) =>
@@ -386,6 +387,33 @@ export default function MembershipPage() {
     setFormData((prev) => ({ ...prev, [name]: checked }));
   };
 
+  const handleSameAsPresentChange = (checked: boolean) => {
+    setSameAsPresent(checked);
+    if (checked) {
+      // Copy present address to permanent address
+      setFormData((prev) => ({
+        ...prev,
+        permanentAddressLine1: prev.addressLine1,
+        permanentAddressLine2: prev.addressLine2,
+        permanentCity: prev.city,
+        permanentDistrict: prev.district,
+        permanentPostcode: prev.postcode,
+        permanentCountry: prev.country,
+      }));
+    } else {
+      // Clear permanent address fields when unchecked
+      setFormData((prev) => ({
+        ...prev,
+        permanentAddressLine1: "",
+        permanentAddressLine2: "",
+        permanentCity: "",
+        permanentDistrict: "",
+        permanentPostcode: "",
+        permanentCountry: "",
+      }));
+    }
+  };
+
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -447,6 +475,38 @@ export default function MembershipPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate mobile number (basic validation for 11 digits)
+    const mobileRegex = /^\d{11}$/;
+    if (!mobileRegex.test(formData.mobile)) {
+      toast({
+        title: "Invalid Mobile Number",
+        description: "Please enter a valid 11-digit mobile number.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate password strength
+    if (formData.password.length < 6) {
+      toast({
+        title: "Weak Password",
+        description: "Password must be at least 6 characters long.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     if (formData.password !== formData.confirmPassword) {
       toast({
@@ -625,9 +685,13 @@ export default function MembershipPage() {
 
       toast({
         title: "Registration Successful",
-        description:
-          "Your account is ready. You can now log in using your credentials.",
+        description: "Your account is ready. Redirecting to login page...",
       });
+
+      // Redirect to login page after a short delay
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1500);
 
       // Reset form
       setFormData({
@@ -674,6 +738,7 @@ export default function MembershipPage() {
       }
       setProfileImageUrl("");
       setCroppedImageBlob(null);
+      setSameAsPresent(false);
       setStep(1);
     } catch (error: any) {
       toast({
@@ -1150,6 +1215,21 @@ export default function MembershipPage() {
                       Permanent Address
                     </h2>
 
+                    {/* Same as Present Address Checkbox */}
+                    <div className="mb-6 flex items-center space-x-2 p-4 bg-primary/5 rounded-lg border border-primary/20">
+                      <Checkbox
+                        id="sameAsPresent"
+                        checked={sameAsPresent}
+                        onCheckedChange={handleSameAsPresentChange}
+                      />
+                      <Label
+                        htmlFor="sameAsPresent"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                      >
+                        Same as present address
+                      </Label>
+                    </div>
+
                     <div>
                       <Label htmlFor="permanentAddressLine1">
                         Address Line 1 (Home/Village/Road)
@@ -1159,6 +1239,7 @@ export default function MembershipPage() {
                         name="permanentAddressLine1"
                         value={formData.permanentAddressLine1}
                         onChange={handleChange}
+                        disabled={sameAsPresent}
                       />
                     </div>
 
@@ -1171,6 +1252,7 @@ export default function MembershipPage() {
                         name="permanentAddressLine2"
                         value={formData.permanentAddressLine2}
                         onChange={handleChange}
+                        disabled={sameAsPresent}
                       />
                     </div>
 
@@ -1182,6 +1264,7 @@ export default function MembershipPage() {
                           name="permanentCity"
                           value={formData.permanentCity}
                           onChange={handleChange}
+                          disabled={sameAsPresent}
                         />
                       </div>
                       <div>
@@ -1191,6 +1274,7 @@ export default function MembershipPage() {
                           onValueChange={(value) =>
                             handleSelectChange("permanentDistrict", value)
                           }
+                          disabled={sameAsPresent}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select district" />
@@ -1214,6 +1298,7 @@ export default function MembershipPage() {
                           name="permanentPostcode"
                           value={formData.permanentPostcode}
                           onChange={handleChange}
+                          disabled={sameAsPresent}
                         />
                       </div>
                       <div>
@@ -1223,6 +1308,7 @@ export default function MembershipPage() {
                           onValueChange={(value) =>
                             handleSelectChange("permanentCountry", value)
                           }
+                          disabled={sameAsPresent}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select country" />

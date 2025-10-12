@@ -213,7 +213,7 @@ export default function DonationPage() {
                 Support Our Mission
               </h1>
               <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-                Your generous contributions empower us to continue our mission
+                Your generous contributions empowers us to continue our mission
                 and make a lasting difference in our community.
               </p>
             </div>
