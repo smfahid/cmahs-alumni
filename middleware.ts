@@ -8,9 +8,27 @@ export async function middleware(request: NextRequest) {
 
   console.log("Middleware - Pathname:", pathname);
 
-  // Check if the request is for an admin route
-  if (pathname.startsWith("/admin")) {
-    console.log("Middleware - Admin route detected");
+  // Define protected routes that require authentication
+  const protectedRoutes = [
+    "/profile",
+    "/settings",
+    "/member-list",
+    "/gallery",
+    "/contact",
+  ];
+
+  // Define admin-only routes
+  const adminRoutes = ["/admin"];
+
+  // Check if the request is for a protected route
+  const isProtectedRoute = protectedRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
+  const isAdminRoute = adminRoutes.some((route) => pathname.startsWith(route));
+
+  if (isProtectedRoute || isAdminRoute) {
+    console.log("Middleware - Protected/Admin route detected:", pathname);
+
     try {
       const cookieStore = cookies();
       const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
@@ -29,39 +47,38 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL("/login", request.url));
       }
 
-      // Get user role to check admin status
-      const { data: roleData, error: roleError } = await supabase
-        .from("users")
-        .select("role")
-        .eq("id", session.user.id)
-        .single();
+      // For admin routes, check admin status
+      if (isAdminRoute) {
+        console.log("Middleware - Admin route access check");
 
-      console.log("Middleware - Role Data:", roleData);
-      console.log("Middleware - Role Error:", roleError);
+        // Get user role to check admin status
+        const { data: roleData, error: roleError } = await supabase
+          .from("users")
+          .select("role")
+          .eq("id", session.user.id)
+          .single();
 
-      if (roleError) {
-        console.error("Role fetch error in middleware:", roleError);
-        return NextResponse.redirect(new URL("/login", request.url));
+        console.log("Middleware - Role Data:", roleData);
+        console.log("Middleware - Role Error:", roleError);
+
+        if (roleError) {
+          console.error("Role fetch error in middleware:", roleError);
+          return NextResponse.redirect(new URL("/login", request.url));
+        }
+
+        const isAdmin = roleData?.role?.toString().toUpperCase() === "ADMIN";
+        console.log("Middleware - Is Admin:", isAdmin);
+        console.log("Middleware - Role from DB:", roleData?.role);
+
+        if (!isAdmin) {
+          console.log("Middleware - Not admin, redirecting to home");
+          return NextResponse.redirect(new URL("/", request.url));
+        }
+
+        console.log("Middleware - Admin access granted, continuing");
       }
 
-      const isAdmin = roleData?.role?.toString().toUpperCase() === "ADMIN";
-      console.log("Middleware - Is Admin:", isAdmin);
-      console.log("Middleware - Role from DB:", roleData?.role);
-      console.log(
-        "Middleware - Role comparison:",
-        roleData?.role?.toString().toUpperCase(),
-        "===",
-        "ADMIN"
-      );
-
-      if (!isAdmin) {
-        console.log("Middleware - Not admin, redirecting to home");
-        console.log("Middleware - Role data:", JSON.stringify(roleData));
-        return NextResponse.redirect(new URL("/", request.url));
-      }
-
-      console.log("Middleware - Admin access granted, continuing");
-      // User is authenticated and is admin, allow access
+      // User is authenticated (and admin if required), allow access
       return NextResponse.next();
     } catch (error) {
       console.error("Middleware error:", error);
@@ -69,7 +86,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // For non-admin routes, just continue
+  // For non-protected routes, just continue
   return NextResponse.next();
 }
 

@@ -20,6 +20,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Upload, X } from "lucide-react";
 import { ImageCropDialog } from "@/components/ImageCropDialog";
 import { ensureBucketExists, STORAGE_BUCKETS } from "@/lib/storage-utils";
+import { AuthGuard } from "@/components/auth/auth-guard";
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -441,537 +442,529 @@ export default function ProfilePage() {
     }
   };
 
-  if (!user) {
-    return (
+  return (
+    <AuthGuard>
       <MainLayout>
         <div className="max-w-4xl mx-auto py-10 px-4">
-          <p>Please log in to view your profile.</p>
-        </div>
-      </MainLayout>
-    );
-  }
-
-  return (
-    <MainLayout>
-      <div className="max-w-4xl mx-auto py-10 px-4">
-        <h1 className="text-3xl font-semibold mb-8">Profile</h1>
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : (
-          <div className="space-y-8">
-            {/* Profile Image Section */}
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold border-b pb-2">
-                Profile Picture
-              </h2>
-              <div className="flex items-center space-x-6">
-                <div className="relative">
-                  <Avatar className="h-24 w-24">
-                    <AvatarImage
-                      src={
-                        imagePreview ||
-                        profileImageUrl ||
-                        "/placeholder-user.jpg"
-                      }
-                      alt="Profile picture"
-                    />
-                    <AvatarFallback className="bg-primary text-white text-2xl font-semibold">
-                      {getUserInitials()}
-                    </AvatarFallback>
-                  </Avatar>
-                  {uploadingImage && (
-                    <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                    </div>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <div className="flex space-x-2">
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileSelect}
-                      className="hidden"
-                    />
-                    {!imagePreview ? (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => fileInputRef.current?.click()}
-                        disabled={uploadingImage}
-                        className="flex items-center space-x-2"
-                      >
-                        <Upload className="h-4 w-4" />
-                        <span>{profileImageUrl ? "Change" : "Upload"}</span>
-                      </Button>
-                    ) : (
-                      <>
-                        <Button
-                          type="button"
-                          variant="default"
-                          size="sm"
-                          onClick={handleImageUpload}
-                          disabled={uploadingImage}
-                          className="flex items-center space-x-2"
-                        >
-                          <Upload className="h-4 w-4" />
-                          <span>
-                            {uploadingImage ? "Uploading..." : "Upload"}
-                          </span>
-                        </Button>
+          <h1 className="text-3xl font-semibold mb-8">Profile</h1>
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <div className="space-y-8">
+              {/* Profile Image Section */}
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold border-b pb-2">
+                  Profile Picture
+                </h2>
+                <div className="flex items-center space-x-6">
+                  <div className="relative">
+                    <Avatar className="h-24 w-24">
+                      <AvatarImage
+                        src={
+                          imagePreview ||
+                          profileImageUrl ||
+                          "/placeholder-user.jpg"
+                        }
+                        alt="Profile picture"
+                      />
+                      <AvatarFallback className="bg-primary text-white text-2xl font-semibold">
+                        {getUserInitials()}
+                      </AvatarFallback>
+                    </Avatar>
+                    {uploadingImage && (
+                      <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex space-x-2">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileSelect}
+                        className="hidden"
+                      />
+                      {!imagePreview ? (
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
-                          onClick={cancelImageSelection}
+                          onClick={() => fileInputRef.current?.click()}
                           disabled={uploadingImage}
                           className="flex items-center space-x-2"
                         >
-                          <X className="h-4 w-4" />
-                          <span>Cancel</span>
+                          <Upload className="h-4 w-4" />
+                          <span>{profileImageUrl ? "Change" : "Upload"}</span>
                         </Button>
-                      </>
-                    )}
-                    {profileImageUrl && !imagePreview && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={handleImageRemove}
-                        disabled={uploadingImage}
-                        className="flex items-center space-x-2 text-destructive hover:text-destructive"
-                      >
-                        <X className="h-4 w-4" />
-                        <span>Remove</span>
-                      </Button>
+                      ) : (
+                        <>
+                          <Button
+                            type="button"
+                            variant="default"
+                            size="sm"
+                            onClick={handleImageUpload}
+                            disabled={uploadingImage}
+                            className="flex items-center space-x-2"
+                          >
+                            <Upload className="h-4 w-4" />
+                            <span>
+                              {uploadingImage ? "Uploading..." : "Upload"}
+                            </span>
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={cancelImageSelection}
+                            disabled={uploadingImage}
+                            className="flex items-center space-x-2"
+                          >
+                            <X className="h-4 w-4" />
+                            <span>Cancel</span>
+                          </Button>
+                        </>
+                      )}
+                      {profileImageUrl && !imagePreview && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={handleImageRemove}
+                          disabled={uploadingImage}
+                          className="flex items-center space-x-2 text-destructive hover:text-destructive"
+                        >
+                          <X className="h-4 w-4" />
+                          <span>Remove</span>
+                        </Button>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-500">
+                      JPG, PNG or GIF. Max size 10MB.
+                    </p>
+                    {imagePreview && (
+                      <p className="text-xs text-green-600">
+                        Preview ready. Click "Upload" to save or "Cancel" to
+                        discard.
+                      </p>
                     )}
                   </div>
-                  <p className="text-sm text-gray-500">
-                    JPG, PNG or GIF. Max size 10MB.
-                  </p>
-                  {imagePreview && (
-                    <p className="text-xs text-green-600">
-                      Preview ready. Click "Upload" to save or "Cancel" to
-                      discard.
-                    </p>
+                </div>
+              </div>
+
+              <form onSubmit={onSave} className="space-y-8">
+                {/* Personal Information */}
+                <div className="space-y-4">
+                  <h2 className="text-xl font-semibold border-b pb-2">
+                    Personal Information
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="first_name">First name</Label>
+                      <Input
+                        id="first_name"
+                        name="first_name"
+                        value={userForm.first_name}
+                        onChange={onUserChange}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="last_name">Last name</Label>
+                      <Input
+                        id="last_name"
+                        name="last_name"
+                        value={userForm.last_name}
+                        onChange={onUserChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="email">Email (read-only)</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        value={userForm.email}
+                        disabled
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="phone">Phone</Label>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        value={userForm.phone}
+                        onChange={onUserChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="father_name">Father's name</Label>
+                      <Input
+                        id="father_name"
+                        name="father_name"
+                        value={detailsForm.father_name}
+                        onChange={onDetailsChange}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="mother_name">Mother's name</Label>
+                      <Input
+                        id="mother_name"
+                        name="mother_name"
+                        value={detailsForm.mother_name}
+                        onChange={onDetailsChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="gender">Gender</Label>
+                      <Select
+                        value={userForm.gender}
+                        onValueChange={(val) =>
+                          onSelectChange("gender", val, "user")
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="blood_group">Blood group</Label>
+                      <Select
+                        value={userForm.blood_group}
+                        onValueChange={(val) =>
+                          onSelectChange("blood_group", val, "user")
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select blood group" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="A+">A+</SelectItem>
+                          <SelectItem value="A-">A-</SelectItem>
+                          <SelectItem value="B+">B+</SelectItem>
+                          <SelectItem value="B-">B-</SelectItem>
+                          <SelectItem value="AB+">AB+</SelectItem>
+                          <SelectItem value="AB-">AB-</SelectItem>
+                          <SelectItem value="O+">O+</SelectItem>
+                          <SelectItem value="O-">O-</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="nid_number">NID number</Label>
+                    <Input
+                      id="nid_number"
+                      name="nid_number"
+                      value={userForm.nid_number}
+                      onChange={onUserChange}
+                    />
+                  </div>
+                </div>
+
+                {/* Institution Information */}
+                <div className="space-y-4">
+                  <h2 className="text-xl font-semibold border-b pb-2">
+                    Institution Information
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="institution">Institution</Label>
+                      <Input
+                        id="institution"
+                        name="institution"
+                        value={detailsForm.institution}
+                        onChange={onDetailsChange}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="group">Group</Label>
+                      <Input
+                        id="group"
+                        name="group"
+                        value={detailsForm.group}
+                        onChange={onDetailsChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="batch_hsc">Batch (SSC)</Label>
+                      <Input
+                        id="batch_hsc"
+                        name="batch_hsc"
+                        value={detailsForm.batch_hsc}
+                        onChange={onDetailsChange}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="batch">Batch (stored in users)</Label>
+                      <Input
+                        id="batch"
+                        name="batch"
+                        value={userForm.batch}
+                        onChange={onUserChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Current Address */}
+                <div className="space-y-4">
+                  <h2 className="text-xl font-semibold border-b pb-2">
+                    Current Address
+                  </h2>
+                  <div>
+                    <Label htmlFor="address_line1">Address line 1</Label>
+                    <Input
+                      id="address_line1"
+                      name="address_line1"
+                      value={detailsForm.address_line1}
+                      onChange={onDetailsChange}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="address_line2">Address line 2</Label>
+                    <Input
+                      id="address_line2"
+                      name="address_line2"
+                      value={detailsForm.address_line2}
+                      onChange={onDetailsChange}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="city">City/Upazila</Label>
+                      <Input
+                        id="city"
+                        name="city"
+                        value={detailsForm.city}
+                        onChange={onDetailsChange}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="district">District</Label>
+                      <Input
+                        id="district"
+                        name="district"
+                        value={detailsForm.district}
+                        onChange={onDetailsChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="postcode">Postcode</Label>
+                      <Input
+                        id="postcode"
+                        name="postcode"
+                        value={detailsForm.postcode}
+                        onChange={onDetailsChange}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="country">Country</Label>
+                      <Input
+                        id="country"
+                        name="country"
+                        value={detailsForm.country}
+                        onChange={onDetailsChange}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="location">Location (users table)</Label>
+                    <Input
+                      id="location"
+                      name="location"
+                      value={userForm.location}
+                      onChange={onUserChange}
+                    />
+                  </div>
+                </div>
+
+                {/* Permanent Address */}
+                <div className="space-y-4">
+                  <h2 className="text-xl font-semibold border-b pb-2">
+                    Permanent Address
+                  </h2>
+                  <div>
+                    <Label htmlFor="permanent_address_line1">
+                      Address line 1
+                    </Label>
+                    <Input
+                      id="permanent_address_line1"
+                      name="permanent_address_line1"
+                      value={detailsForm.permanent_address_line1}
+                      onChange={onDetailsChange}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="permanent_address_line2">
+                      Address line 2
+                    </Label>
+                    <Input
+                      id="permanent_address_line2"
+                      name="permanent_address_line2"
+                      value={detailsForm.permanent_address_line2}
+                      onChange={onDetailsChange}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="permanent_city">City/Upazila</Label>
+                      <Input
+                        id="permanent_city"
+                        name="permanent_city"
+                        value={detailsForm.permanent_city}
+                        onChange={onDetailsChange}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="permanent_district">District</Label>
+                      <Input
+                        id="permanent_district"
+                        name="permanent_district"
+                        value={detailsForm.permanent_district}
+                        onChange={onDetailsChange}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="permanent_postcode">Postcode</Label>
+                      <Input
+                        id="permanent_postcode"
+                        name="permanent_postcode"
+                        value={detailsForm.permanent_postcode}
+                        onChange={onDetailsChange}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="permanent_country">Country</Label>
+                      <Input
+                        id="permanent_country"
+                        name="permanent_country"
+                        value={detailsForm.permanent_country}
+                        onChange={onDetailsChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Professional Information */}
+                <div className="space-y-4">
+                  <h2 className="text-xl font-semibold border-b pb-2">
+                    Professional Information
+                  </h2>
+                  <div>
+                    <Label htmlFor="designation">Designation</Label>
+                    <Input
+                      id="designation"
+                      name="designation"
+                      value={detailsForm.designation}
+                      onChange={onDetailsChange}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="professional_info">Professional info</Label>
+                    <Textarea
+                      id="professional_info"
+                      name="professional_info"
+                      value={detailsForm.professional_info}
+                      onChange={onDetailsChange}
+                      rows={3}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="profession">Profession</Label>
+                    <Input
+                      id="profession"
+                      name="profession"
+                      value={detailsForm.profession}
+                      onChange={onDetailsChange}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="marital_status">Marital status</Label>
+                    <Select
+                      value={detailsForm.marital_status}
+                      onValueChange={(val) =>
+                        onSelectChange("marital_status", val, "details")
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select marital status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Single">Single</SelectItem>
+                        <SelectItem value="Married">Married</SelectItem>
+                        <SelectItem value="Divorced">Divorced</SelectItem>
+                        <SelectItem value="Widowed">Widowed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {(detailsForm.marital_status === "Married" ||
+                    detailsForm.marital_status === "Widowed") && (
+                    <>
+                      <div>
+                        <Label htmlFor="spouse_name">Spouse name</Label>
+                        <Input
+                          id="spouse_name"
+                          name="spouse_name"
+                          value={detailsForm.spouse_name}
+                          onChange={onDetailsChange}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="number_of_children">
+                          Number of children
+                        </Label>
+                        <Input
+                          id="number_of_children"
+                          name="number_of_children"
+                          type="number"
+                          value={detailsForm.number_of_children}
+                          onChange={onDetailsChange}
+                        />
+                      </div>
+                    </>
                   )}
                 </div>
-              </div>
+
+                <div className="pt-4">
+                  <Button type="submit" disabled={saving} size="lg">
+                    {saving ? "Saving..." : "Save Profile"}
+                  </Button>
+                </div>
+              </form>
             </div>
+          )}
+        </div>
 
-            <form onSubmit={onSave} className="space-y-8">
-              {/* Personal Information */}
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold border-b pb-2">
-                  Personal Information
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="first_name">First name</Label>
-                    <Input
-                      id="first_name"
-                      name="first_name"
-                      value={userForm.first_name}
-                      onChange={onUserChange}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="last_name">Last name</Label>
-                    <Input
-                      id="last_name"
-                      name="last_name"
-                      value={userForm.last_name}
-                      onChange={onUserChange}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="email">Email (read-only)</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      value={userForm.email}
-                      disabled
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Phone</Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      value={userForm.phone}
-                      onChange={onUserChange}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="father_name">Father's name</Label>
-                    <Input
-                      id="father_name"
-                      name="father_name"
-                      value={detailsForm.father_name}
-                      onChange={onDetailsChange}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="mother_name">Mother's name</Label>
-                    <Input
-                      id="mother_name"
-                      name="mother_name"
-                      value={detailsForm.mother_name}
-                      onChange={onDetailsChange}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="gender">Gender</Label>
-                    <Select
-                      value={userForm.gender}
-                      onValueChange={(val) =>
-                        onSelectChange("gender", val, "user")
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select gender" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="blood_group">Blood group</Label>
-                    <Select
-                      value={userForm.blood_group}
-                      onValueChange={(val) =>
-                        onSelectChange("blood_group", val, "user")
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select blood group" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="A+">A+</SelectItem>
-                        <SelectItem value="A-">A-</SelectItem>
-                        <SelectItem value="B+">B+</SelectItem>
-                        <SelectItem value="B-">B-</SelectItem>
-                        <SelectItem value="AB+">AB+</SelectItem>
-                        <SelectItem value="AB-">AB-</SelectItem>
-                        <SelectItem value="O+">O+</SelectItem>
-                        <SelectItem value="O-">O-</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="nid_number">NID number</Label>
-                  <Input
-                    id="nid_number"
-                    name="nid_number"
-                    value={userForm.nid_number}
-                    onChange={onUserChange}
-                  />
-                </div>
-              </div>
-
-              {/* Institution Information */}
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold border-b pb-2">
-                  Institution Information
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="institution">Institution</Label>
-                    <Input
-                      id="institution"
-                      name="institution"
-                      value={detailsForm.institution}
-                      onChange={onDetailsChange}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="group">Group</Label>
-                    <Input
-                      id="group"
-                      name="group"
-                      value={detailsForm.group}
-                      onChange={onDetailsChange}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="batch_hsc">Batch (SSC)</Label>
-                    <Input
-                      id="batch_hsc"
-                      name="batch_hsc"
-                      value={detailsForm.batch_hsc}
-                      onChange={onDetailsChange}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="batch">Batch (stored in users)</Label>
-                    <Input
-                      id="batch"
-                      name="batch"
-                      value={userForm.batch}
-                      onChange={onUserChange}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Current Address */}
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold border-b pb-2">
-                  Current Address
-                </h2>
-                <div>
-                  <Label htmlFor="address_line1">Address line 1</Label>
-                  <Input
-                    id="address_line1"
-                    name="address_line1"
-                    value={detailsForm.address_line1}
-                    onChange={onDetailsChange}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="address_line2">Address line 2</Label>
-                  <Input
-                    id="address_line2"
-                    name="address_line2"
-                    value={detailsForm.address_line2}
-                    onChange={onDetailsChange}
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="city">City/Upazila</Label>
-                    <Input
-                      id="city"
-                      name="city"
-                      value={detailsForm.city}
-                      onChange={onDetailsChange}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="district">District</Label>
-                    <Input
-                      id="district"
-                      name="district"
-                      value={detailsForm.district}
-                      onChange={onDetailsChange}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="postcode">Postcode</Label>
-                    <Input
-                      id="postcode"
-                      name="postcode"
-                      value={detailsForm.postcode}
-                      onChange={onDetailsChange}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="country">Country</Label>
-                    <Input
-                      id="country"
-                      name="country"
-                      value={detailsForm.country}
-                      onChange={onDetailsChange}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="location">Location (users table)</Label>
-                  <Input
-                    id="location"
-                    name="location"
-                    value={userForm.location}
-                    onChange={onUserChange}
-                  />
-                </div>
-              </div>
-
-              {/* Permanent Address */}
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold border-b pb-2">
-                  Permanent Address
-                </h2>
-                <div>
-                  <Label htmlFor="permanent_address_line1">
-                    Address line 1
-                  </Label>
-                  <Input
-                    id="permanent_address_line1"
-                    name="permanent_address_line1"
-                    value={detailsForm.permanent_address_line1}
-                    onChange={onDetailsChange}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="permanent_address_line2">
-                    Address line 2
-                  </Label>
-                  <Input
-                    id="permanent_address_line2"
-                    name="permanent_address_line2"
-                    value={detailsForm.permanent_address_line2}
-                    onChange={onDetailsChange}
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="permanent_city">City/Upazila</Label>
-                    <Input
-                      id="permanent_city"
-                      name="permanent_city"
-                      value={detailsForm.permanent_city}
-                      onChange={onDetailsChange}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="permanent_district">District</Label>
-                    <Input
-                      id="permanent_district"
-                      name="permanent_district"
-                      value={detailsForm.permanent_district}
-                      onChange={onDetailsChange}
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="permanent_postcode">Postcode</Label>
-                    <Input
-                      id="permanent_postcode"
-                      name="permanent_postcode"
-                      value={detailsForm.permanent_postcode}
-                      onChange={onDetailsChange}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="permanent_country">Country</Label>
-                    <Input
-                      id="permanent_country"
-                      name="permanent_country"
-                      value={detailsForm.permanent_country}
-                      onChange={onDetailsChange}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Professional Information */}
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold border-b pb-2">
-                  Professional Information
-                </h2>
-                <div>
-                  <Label htmlFor="designation">Designation</Label>
-                  <Input
-                    id="designation"
-                    name="designation"
-                    value={detailsForm.designation}
-                    onChange={onDetailsChange}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="professional_info">Professional info</Label>
-                  <Textarea
-                    id="professional_info"
-                    name="professional_info"
-                    value={detailsForm.professional_info}
-                    onChange={onDetailsChange}
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="profession">Profession</Label>
-                  <Input
-                    id="profession"
-                    name="profession"
-                    value={detailsForm.profession}
-                    onChange={onDetailsChange}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="marital_status">Marital status</Label>
-                  <Select
-                    value={detailsForm.marital_status}
-                    onValueChange={(val) =>
-                      onSelectChange("marital_status", val, "details")
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select marital status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Single">Single</SelectItem>
-                      <SelectItem value="Married">Married</SelectItem>
-                      <SelectItem value="Divorced">Divorced</SelectItem>
-                      <SelectItem value="Widowed">Widowed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                {(detailsForm.marital_status === "Married" ||
-                  detailsForm.marital_status === "Widowed") && (
-                  <>
-                    <div>
-                      <Label htmlFor="spouse_name">Spouse name</Label>
-                      <Input
-                        id="spouse_name"
-                        name="spouse_name"
-                        value={detailsForm.spouse_name}
-                        onChange={onDetailsChange}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="number_of_children">
-                        Number of children
-                      </Label>
-                      <Input
-                        id="number_of_children"
-                        name="number_of_children"
-                        type="number"
-                        value={detailsForm.number_of_children}
-                        onChange={onDetailsChange}
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
-
-              <div className="pt-4">
-                <Button type="submit" disabled={saving} size="lg">
-                  {saving ? "Saving..." : "Save Profile"}
-                </Button>
-              </div>
-            </form>
-          </div>
+        {/* Image Crop Dialog */}
+        {imageToCrop && (
+          <ImageCropDialog
+            open={cropDialogOpen}
+            imageSrc={imageToCrop}
+            onClose={handleCropDialogClose}
+            onCropComplete={handleCropComplete}
+            aspectRatio={1}
+            circularCrop={true}
+          />
         )}
-      </div>
-
-      {/* Image Crop Dialog */}
-      {imageToCrop && (
-        <ImageCropDialog
-          open={cropDialogOpen}
-          imageSrc={imageToCrop}
-          onClose={handleCropDialogClose}
-          onCropComplete={handleCropComplete}
-          aspectRatio={1}
-          circularCrop={true}
-        />
-      )}
-    </MainLayout>
+      </MainLayout>
+    </AuthGuard>
   );
 }

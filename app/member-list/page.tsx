@@ -1,6 +1,5 @@
-import { MainLayout } from "@/components/main-layout";
-import { MemberListTable } from "@/components/members/member-list-table";
 import { getSupabase } from "@/lib/supabase";
+import MemberListClient from "./member-list-client";
 
 // Define the User type (consistent with contact-cards.tsx)
 interface User {
@@ -37,18 +36,5 @@ async function getMembers(): Promise<User[]> {
 export default async function MemberListPage() {
   const members = await getMembers();
 
-  return (
-    <MainLayout>
-      <div className="bg-gray-50 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-center">
-              Registered Members
-            </h2>
-          </div>
-          <MemberListTable members={members} />
-        </div>
-      </div>
-    </MainLayout>
-  );
+  return <MemberListClient members={members} />;
 }

@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import { Facebook, Instagram, Mail, MapPin, Phone } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
 
 export function Footer() {
+  const { user } = useAuth();
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container-custom py-16">
@@ -53,8 +57,13 @@ export function Footer() {
                 { name: "About Us", href: "/about" },
                 { name: "Events", href: "/events" },
                 { name: "Apply For Membership", href: "/membership" },
-                { name: "Gallery", href: "/gallery" },
-                { name: "Contact", href: "/contact" },
+                // Only show protected links if user is authenticated
+                ...(user
+                  ? [
+                      { name: "Gallery", href: "/gallery" },
+                      { name: "Contact", href: "/contact" },
+                    ]
+                  : []),
               ].map((link) => (
                 <li key={link.name}>
                   <Link

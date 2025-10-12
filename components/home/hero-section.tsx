@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { useAuth } from "@/lib/auth-context";
 
 interface HeroImage {
   id: string;
@@ -14,7 +15,8 @@ interface HeroImage {
   description?: string;
 }
 
-export function HeroSection({ images }: { images: HeroImage[] }) {
+export function HeroSection({ images }: Readonly<{ images: HeroImage[] }>) {
+  const { user } = useAuth();
   const [currentIndex, setCurrentIndex] = useState(0);
   const defaultImages = [
     {
@@ -161,15 +163,17 @@ export function HeroSection({ images }: { images: HeroImage[] }) {
                             ease: [0.16, 1, 0.3, 1],
                           }}
                         >
-                          <Link href="/membership">
-                            <Button
-                              size="lg"
-                              className="bg-white text-primary hover:bg-white/90 rounded-xl px-6 h-10 md:h-12 text-sm md:text-base font-medium shadow-xl active:scale-95 transition-all duration-200"
-                            >
-                              Join Now
-                              <ArrowRight className="ml-2 h-4 w-4" />
-                            </Button>
-                          </Link>
+                          {!user && (
+                            <Link href="/membership">
+                              <Button
+                                size="lg"
+                                className="bg-white text-primary hover:bg-white/90 rounded-xl px-6 h-10 md:h-12 text-sm md:text-base font-medium shadow-xl active:scale-95 transition-all duration-200"
+                              >
+                                Join Now
+                                <ArrowRight className="ml-2 h-4 w-4" />
+                              </Button>
+                            </Link>
+                          )}
                           <Link href="/about">
                             <Button
                               size="lg"

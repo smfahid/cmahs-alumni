@@ -1,5 +1,8 @@
+"use client";
+
 import { MainLayout } from "@/components/main-layout";
 import { ContactCards } from "@/components/contact/contact-cards";
+import { AuthGuard } from "@/components/auth/auth-guard";
 
 // Fisher-Yates shuffle algorithm
 function shuffleArray<T>(array: T[]): T[] {
@@ -30,7 +33,7 @@ interface CommitteeMember {
   users: User;
 }
 
-export default async function ContactPage() {
+export default function ContactPage() {
   const staticEcMembers: CommitteeMember[] = [
     {
       id: "1",
@@ -853,151 +856,156 @@ export default async function ContactPage() {
   const boardMembers = staticBoardMembers;
   const ecMembers = shuffleArray(staticEcMembers);
   return (
-    <MainLayout>
-      <div className="bg-gradient-to-b from-white via-primary-50/20 to-white min-h-screen">
-        {/* Header Section */}
-        <div className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-foreground mb-4">
-                Get in Touch
-              </h1>
-              <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
-                Connect with our team and community leaders
-              </p>
+    <AuthGuard>
+      <MainLayout>
+        <div className="bg-gradient-to-b from-white via-primary-50/20 to-white min-h-screen">
+          {/* Header Section */}
+          <div className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-foreground mb-4">
+                  Get in Touch
+                </h1>
+                <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed">
+                  Connect with our team and community leaders
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="pb-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="mb-16">
-              <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-center mb-12">
-                Our Organizers (Admin Panel)
-              </h2>
-              <ContactCards boardMembers={boardMembers} ecMembers={ecMembers} />
-            </div>
+          <div className="pb-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="mb-16">
+                <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight text-center mb-12">
+                  Our Organizers (Admin Panel)
+                </h2>
+                <ContactCards
+                  boardMembers={boardMembers}
+                  ecMembers={ecMembers}
+                />
+              </div>
 
-            <div>
-              <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight mb-8">
-                Contact Information
-              </h2>
-              <div className="bg-white rounded-2xl shadow-card p-8 sm:p-10 mb-8 border border-border/50">
-                <div className="space-y-6">
-                  <div className="flex items-start group">
-                    <div className="flex-shrink-0 bg-primary/10 rounded-xl p-4 mr-4 group-hover:bg-primary/20 transition-colors">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6 text-primary"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
+              <div>
+                <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight mb-8">
+                  Contact Information
+                </h2>
+                <div className="bg-white rounded-2xl shadow-card p-8 sm:p-10 mb-8 border border-border/50">
+                  <div className="space-y-6">
+                    <div className="flex items-start group">
+                      <div className="flex-shrink-0 bg-primary/10 rounded-xl p-4 mr-4 group-hover:bg-primary/20 transition-colors">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6 text-primary"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-foreground mb-1">
+                          Address
+                        </h3>
+                        <p className="text-muted-foreground text-[15px] leading-relaxed">
+                          Char Mehar Azizia High School Alumni Association,
+                          <br />
+                          Ramdoyal Bazar, Ramgati, Laxmipur - 3730.
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-foreground mb-1">
-                        Address
-                      </h3>
-                      <p className="text-muted-foreground text-[15px] leading-relaxed">
-                        Char Mehar Azizia High School Alumni Association,
-                        <br />
-                        Ramdoyal Bazar, Ramgati, Laxmipur - 3730.
-                      </p>
-                    </div>
-                  </div>
 
-                  <div className="flex items-start group">
-                    <div className="flex-shrink-0 bg-primary/10 rounded-xl p-4 mr-4 group-hover:bg-primary/20 transition-colors">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6 text-primary"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                        />
-                      </svg>
+                    <div className="flex items-start group">
+                      <div className="flex-shrink-0 bg-primary/10 rounded-xl p-4 mr-4 group-hover:bg-primary/20 transition-colors">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6 text-primary"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-foreground mb-1">
+                          Phone
+                        </h3>
+                        <a
+                          href="tel:+8801764440404"
+                          className="text-primary text-[15px] hover:text-primary-600 transition-colors"
+                        >
+                          +880 1764-440404
+                        </a>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-foreground mb-1">
-                        Phone
-                      </h3>
-                      <a
-                        href="tel:+8801764440404"
-                        className="text-primary text-[15px] hover:text-primary-600 transition-colors"
-                      >
-                        +880 1764-440404
-                      </a>
-                    </div>
-                  </div>
 
-                  <div className="flex items-start group">
-                    <div className="flex-shrink-0 bg-primary/10 rounded-xl p-4 mr-4 group-hover:bg-primary/20 transition-colors">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6 text-primary"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                        />
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-foreground mb-1">
-                        Email
-                      </h3>
-                      <a
-                        href="mailto:alumni.cmahs@gmail.com"
-                        className="text-primary text-[15px] hover:text-primary-600 transition-colors"
-                      >
-                        alumni.cmahs@gmail.com
-                      </a>
+                    <div className="flex items-start group">
+                      <div className="flex-shrink-0 bg-primary/10 rounded-xl p-4 mr-4 group-hover:bg-primary/20 transition-colors">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6 text-primary"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-foreground mb-1">
+                          Email
+                        </h3>
+                        <a
+                          href="mailto:alumni.cmahs@gmail.com"
+                          className="text-primary text-[15px] hover:text-primary-600 transition-colors"
+                        >
+                          alumni.cmahs@gmail.com
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="bg-white rounded-2xl shadow-card overflow-hidden border border-border/50">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3682.1961205074754!2d90.95194717546266!3d22.646475279439144!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3754b5158cb08e2d%3A0x9ec9602841b5758a!2sChar%20Mehar%20Azizia%20High%20School!5e0!3m2!1sen!2sbd!4v1748237470538!5m2!1sen!2sbd"
-                  width="100%"
-                  height="400"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="CMAHS Location"
-                  className="grayscale hover:grayscale-0 transition-all duration-300"
-                ></iframe>
+                <div className="bg-white rounded-2xl shadow-card overflow-hidden border border-border/50">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3682.1961205074754!2d90.95194717546266!3d22.646475279439144!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3754b5158cb08e2d%3A0x9ec9602841b5758a!2sChar%20Mehar%20Azizia%20High%20School!5e0!3m2!1sen!2sbd!4v1748237470538!5m2!1sen!2sbd"
+                    width="100%"
+                    height="400"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="CMAHS Location"
+                    className="grayscale hover:grayscale-0 transition-all duration-300"
+                  ></iframe>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </MainLayout>
+      </MainLayout>
+    </AuthGuard>
   );
 }

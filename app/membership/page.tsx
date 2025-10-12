@@ -354,7 +354,7 @@ export default function MembershipPage() {
     permanentCity: "",
     permanentDistrict: "",
     permanentPostcode: "",
-    permanentCountry: "",
+    permanentCountry: "Bangladesh",
 
     // Professional Information
     designation: "",
@@ -390,7 +390,7 @@ export default function MembershipPage() {
   const handleSameAsPresentChange = (checked: boolean) => {
     setSameAsPresent(checked);
     if (checked) {
-      // Copy present address to permanent address
+      // Copy present address to permanent address (country always stays Bangladesh)
       setFormData((prev) => ({
         ...prev,
         permanentAddressLine1: prev.addressLine1,
@@ -398,10 +398,10 @@ export default function MembershipPage() {
         permanentCity: prev.city,
         permanentDistrict: prev.district,
         permanentPostcode: prev.postcode,
-        permanentCountry: prev.country,
+        // permanentCountry remains "Bangladesh" (not copied)
       }));
     } else {
-      // Clear permanent address fields when unchecked
+      // Clear permanent address fields when unchecked (keep Bangladesh as default)
       setFormData((prev) => ({
         ...prev,
         permanentAddressLine1: "",
@@ -409,7 +409,7 @@ export default function MembershipPage() {
         permanentCity: "",
         permanentDistrict: "",
         permanentPostcode: "",
-        permanentCountry: "",
+        // permanentCountry remains "Bangladesh"
       }));
     }
   };
@@ -720,7 +720,7 @@ export default function MembershipPage() {
         permanentCity: "",
         permanentDistrict: "",
         permanentPostcode: "",
-        permanentCountry: "",
+        permanentCountry: "Bangladesh",
         designation: "",
         professionalInfo: "",
         profession: "",
@@ -764,6 +764,7 @@ export default function MembershipPage() {
         "gender",
       ],
       2: [
+        "group", // Group (required)
         "batchHSC", // Batch
         // "addressLine1", // No longer required for step progression
         // "city", // No longer required for step progression
@@ -1088,7 +1089,9 @@ export default function MembershipPage() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="group">Group</Label>
+                        <Label htmlFor="group">
+                          Group <span className="text-red-500">*</span>
+                        </Label>
                         <Select
                           value={formData.group}
                           onValueChange={(value) =>
@@ -1148,7 +1151,7 @@ export default function MembershipPage() {
 
                     <div>
                       <Label htmlFor="addressLine2">
-                        Address Line 2 (Post Office)
+                        Address Line 2 (Post Office/Post Code)
                       </Label>
                       <Input
                         id="addressLine2"
@@ -1245,7 +1248,7 @@ export default function MembershipPage() {
 
                     <div>
                       <Label htmlFor="permanentAddressLine2">
-                        Address Line 2 (Post Office)
+                        Address Line 2 (Post Office/Post Code)
                       </Label>
                       <Input
                         id="permanentAddressLine2"
@@ -1303,24 +1306,12 @@ export default function MembershipPage() {
                       </div>
                       <div>
                         <Label htmlFor="permanentCountry">Country</Label>
-                        <Select
+                        <Input
+                          id="permanentCountry"
+                          name="permanentCountry"
                           value={formData.permanentCountry}
-                          onValueChange={(value) =>
-                            handleSelectChange("permanentCountry", value)
-                          }
-                          disabled={sameAsPresent}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select country" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {COUNTRIES.map((countryName) => (
-                              <SelectItem key={countryName} value={countryName}>
-                                {countryName}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          disabled
+                        />
                       </div>
                     </div>
 
