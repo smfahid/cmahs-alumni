@@ -20,7 +20,7 @@ export function InitiatorPage() {
       mobile: "+8801764440404",
       email: "1971revolution@gmail.com",
       bloodGroup: "B+",
-      current_location: "Khagrachari CHT",
+      current_location: "Dhaka",
       imageUrl: "/assets/rakib.png",
     },
     {
