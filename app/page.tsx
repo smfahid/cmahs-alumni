@@ -2,8 +2,6 @@ import { MainLayout } from "@/components/main-layout";
 import { HeroSection } from "@/components/home/hero-section";
 import { AboutSection } from "@/components/home/about-section";
 import { EventsSection } from "@/components/home/events-section";
-import { NewsSection } from "@/components/home/news-section";
-import { CommitteesSection } from "@/components/home/committees-section";
 import { getSupabase } from "@/lib/supabase";
 
 async function getHomePageData() {
@@ -16,19 +14,11 @@ async function getHomePageData() {
     .limit(1)
     .single();
 
-  // Get events
+  // Get all events - the EventsSection component will filter them
   const { data: events } = await supabase
     .from("events")
     .select("*")
-    .order("event_date", { ascending: true })
-    .limit(3);
-
-  // Get news
-  const { data: news } = await supabase
-    .from("news")
-    .select("*")
-    .order("published_date", { ascending: false })
-    .limit(3);
+    .order("event_date", { ascending: true });
 
   // Get hero images
   const { data: heroImages } = await supabase
@@ -40,13 +30,12 @@ async function getHomePageData() {
   return {
     about: aboutData,
     events: events || [],
-    news: news || [],
     heroImages: heroImages || [],
   };
 }
 
 export default async function Home() {
-  const { about, events, news, heroImages } = await getHomePageData();
+  const { about, events, heroImages } = await getHomePageData();
 
   return (
     <MainLayout>

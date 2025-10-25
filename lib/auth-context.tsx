@@ -4,6 +4,7 @@ import type React from "react";
 
 import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import type { Session, User } from "@supabase/supabase-js";
+import { getBrowserClient } from "./supabase";
 
 type AuthContextType = {
   user: User | null;
@@ -31,6 +32,9 @@ export function AuthProvider({
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    const supabase = getBrowserClient();
+
+    // Fetch initial auth status with additional user data
     const fetchAuthStatus = async () => {
       try {
         const response = await fetch("/api/auth/status");
@@ -56,14 +60,29 @@ export function AuthProvider({
       }
     };
 
+    // Initial fetch
     fetchAuthStatus();
 
-    // Set up a simple polling mechanism to check auth status periodically
-    // This replaces the Supabase auth state change listener
-    const interval = setInterval(fetchAuthStatus, 30000); // Check every 30 seconds
+    // Set up Supabase auth state change listener
+    // This is event-driven and fires immediately on auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth state changed:", event);
+
+      if (session) {
+        // When auth state changes, fetch full user data including role
+        await fetchAuthStatus();
+      } else {
+        // No session - clear everything
+        setSessionState(null);
+        setUser(null);
+        setIsAdmin(false);
+      }
+    });
 
     return () => {
-      clearInterval(interval);
+      subscription.unsubscribe();
     };
   }, []);
 

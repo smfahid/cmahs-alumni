@@ -27,7 +27,6 @@ interface ExtendedUser {
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const { user, signOut, isAdmin } = useAuth();
 
@@ -62,19 +61,6 @@ export function Navbar() {
     const userData = user as ExtendedUser;
     return userData.profile_image_url || null;
   };
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Prevent body scroll when menu is open
   useEffect(() => {
@@ -117,17 +103,8 @@ export function Navbar() {
       )
     : baseNavLinks;
 
-  // Check if we're on homepage - only homepage should have transparent navbar at top
-  const isHomePage = pathname === "/";
-
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out ${
-        scrolled || !isHomePage
-          ? "bg-white/80 backdrop-blur-2xl shadow-soft py-3"
-          : "bg-black/20 backdrop-blur-md py-4 md:py-5"
-      }`}
-    >
+    <nav className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out bg-white shadow-soft py-3">
       <div className="container-custom">
         <div className="flex justify-between items-center">
           <Link href="/" className="flex-shrink-0 flex items-center group">
@@ -135,9 +112,7 @@ export function Navbar() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className={`font-semibold text-lg sm:text-xl md:text-2xl tracking-tight transition-colors ${
-                scrolled || !isHomePage ? "text-foreground" : "text-white"
-              } group-hover:text-primary`}
+              className="font-semibold text-lg sm:text-xl md:text-2xl tracking-tight transition-colors text-foreground group-hover:text-primary"
             >
               CMAHS ALUMNI
             </motion.span>
@@ -159,12 +134,8 @@ export function Navbar() {
                     href={link.href}
                     className={`relative px-3 py-2 rounded-lg text-[15px] font-medium transition-all duration-200 ${
                       pathname === link.href
-                        ? scrolled || !isHomePage
-                          ? "text-primary bg-primary-50/80"
-                          : "text-white bg-white/20"
-                        : scrolled || !isHomePage
-                        ? "text-foreground/80 hover:text-primary hover:bg-primary-50/50"
-                        : "text-white/90 hover:text-white hover:bg-white/10"
+                        ? "text-primary bg-primary-50/80"
+                        : "text-foreground/80 hover:text-primary hover:bg-primary-50/50"
                     }`}
                   >
                     {link.name}
@@ -264,11 +235,7 @@ export function Navbar() {
                     <Button
                       variant="default"
                       size="sm"
-                      className={`rounded-xl shadow-sm text-[15px] h-9 px-5 transition-all duration-200 ${
-                        scrolled || !isHomePage
-                          ? "bg-primary hover:bg-primary-600"
-                          : "bg-white text-primary hover:bg-white/90 shadow-lg"
-                      }`}
+                      className="rounded-xl shadow-sm text-[15px] h-9 px-5 transition-all duration-200 bg-primary hover:bg-primary-600"
                     >
                       Sign In
                     </Button>
@@ -280,11 +247,7 @@ export function Navbar() {
           <div className="flex lg:hidden items-center">
             <button
               onClick={toggleMenu}
-              className={`inline-flex items-center justify-center p-2.5 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary ${
-                scrolled || !isHomePage
-                  ? "text-foreground hover:bg-primary-50"
-                  : "text-white hover:bg-white/20 bg-white/10 backdrop-blur-sm"
-              }`}
+              className="inline-flex items-center justify-center p-2.5 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary text-foreground hover:bg-primary-50"
               aria-expanded={isOpen}
             >
               <span className="sr-only">Open main menu</span>

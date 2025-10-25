@@ -29,13 +29,7 @@ export function Footer() {
               >
                 <Facebook className="h-5 w-5" />
               </a>
-              <a
-                href="#"
-                className="text-gray-300 hover:text-white bg-gray-800 hover:bg-primary p-3 rounded-full transition-colors duration-300"
-                aria-label="Instagram"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
+
               <a
                 href="mailto:info@cmahs.org"
                 className="text-gray-300 hover:text-white bg-gray-800 hover:bg-primary p-3 rounded-full transition-colors duration-300"
@@ -52,29 +46,39 @@ export function Footer() {
               <span className="absolute bottom-0 left-0 w-1/2 h-1 bg-primary"></span>
             </h3>
             <ul className="space-y-3">
-              {[
-                { name: "Home", href: "/" },
-                { name: "About Us", href: "/about" },
-                { name: "Events", href: "/events" },
-                { name: "Apply For Membership", href: "/membership" },
-                // Only show protected links if user is authenticated
-                ...(user
-                  ? [
-                      { name: "Gallery", href: "/gallery" },
-                      { name: "Contact", href: "/contact" },
-                    ]
-                  : []),
-              ].map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group"
-                  >
-                    <span className="w-2 h-2 bg-primary rounded-full mr-2 transform scale-0 group-hover:scale-100 transition-transform duration-300"></span>
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
+              {(() => {
+                const baseLinks = [
+                  { name: "Home", href: "/" },
+                  { name: "About Us", href: "/about" },
+                  { name: "Members", href: "/member-list" },
+                  { name: "Gallery", href: "/gallery" },
+                  { name: "Contact", href: "/contact" },
+                  { name: "Donations", href: "/donations" },
+                  { name: "Campaigner", href: "/initiator" },
+                ];
+
+                // Filter links based on authentication
+                const links = user
+                  ? baseLinks
+                  : baseLinks.filter(
+                      (link) =>
+                        link.name !== "Members" &&
+                        link.name !== "Contact" &&
+                        link.name !== "Gallery"
+                    );
+
+                return links.map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      href={link.href}
+                      className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group"
+                    >
+                      <span className="w-2 h-2 bg-primary rounded-full mr-2 transform scale-0 group-hover:scale-100 transition-transform duration-300"></span>
+                      {link.name}
+                    </Link>
+                  </li>
+                ));
+              })()}
             </ul>
           </div>
 
